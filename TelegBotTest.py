@@ -1,5 +1,6 @@
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
+from newssearch import search_keyword
 
 
 updater = Updater(token='1686427047:AAHQSLOVFSow3IVT7xrgy34flkOXcmp_k_I', use_context=True)
@@ -20,6 +21,19 @@ def kukaoot(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Moikka! Mä olen Ella-Botti ja autan sua etsimään sisältöä sun elämään. :)")
 
 
+def search(update, context):
+    text=update.message.text
+    print(text)
+
+    results = search_keyword('koira')
+    print(results)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=results[0])
+
+
+
+
+
+
 
 
 
@@ -31,6 +45,11 @@ dispatcher.add_handler(moro_handler)
 
 kukaoot_handler = CommandHandler('kukaoot', kukaoot)
 dispatcher.add_handler(kukaoot_handler)
+
+
+search_handler = CommandHandler('search', search)
+dispatcher.add_handler(search_handler)
+
 
 
 def caps(update, context):
