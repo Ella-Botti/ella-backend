@@ -16,6 +16,9 @@ def start(update, context):
 def moro(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Kato Sauli terve!")
 
+def kukaoot(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Moikka! Mä olen Ella-Botti ja autan sua etsimään sisältöä sun elämään. :)")
+
 
 
 
@@ -25,6 +28,9 @@ dispatcher.add_handler(start_handler)
 
 moro_handler = CommandHandler('moro', moro)
 dispatcher.add_handler(moro_handler)
+
+kukaoot_handler = CommandHandler('kukaoot', kukaoot)
+dispatcher.add_handler(kukaoot_handler)
 
 
 def caps(update, context):
