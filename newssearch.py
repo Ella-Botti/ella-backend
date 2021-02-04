@@ -1,5 +1,7 @@
 import json
 import re
+
+
 def search_keyword(queryString):
     with open('./articles.json') as json_file:
         results = []
