@@ -4,8 +4,6 @@ def search_keyword(queryString):
     with open('./articles.json') as json_file:
         results = []
         filteredResults = []
-        keyword1 = "'TITLE':"
-        keyword2 = ", 'PUBLISHED'"
         data = json.load(json_file)
         for i,j in data.items():
             results.append(str(j))
