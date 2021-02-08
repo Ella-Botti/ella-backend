@@ -1,7 +1,9 @@
-from telegram.ext import Updater
-from telegram.ext import CommandHandler
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup,Update
 import logging
+import random
 from newssearch import search_keyword
+
 
 
 updater = Updater(token='1686427047:AAHQSLOVFSow3IVT7xrgy34flkOXcmp_k_I', use_context=True)
@@ -11,7 +13,6 @@ dispatcher = updater.dispatcher
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                      level=logging.INFO)
-
 
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
@@ -24,14 +25,18 @@ def moro(update, context):
 def kukaoot(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Moikka! Mä olen Ella-Botti ja autan sua etsimään sisältöä sun elämään. :)")
 
-
 def search(update, context):
     text = update.message.text
     search_word = text[8:]
-    print(search_word)
-    results = search_keyword(search_word)
-    print(results)
-    context.bot.send_message(chat_id=update.effective_chat.id, text=results[0])
+    i = 0
+    for i in range(i, i+5):
+        print(search_word)
+        results = search_keyword(search_word)
+        print(results)
+        
+        context.bot.send_message(chat_id=update.effective_chat.id, text=results[i])
+
+        
 
 
 start_handler = CommandHandler('start', start)
