@@ -3,7 +3,13 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup,Update
 import logging
 import random
 from newssearch import search_keyword
+from dotenv import load_dotenv
+import os
+from pathlib import Path
 
+dotenv_path = Path('./.env')
+load_dotenv(dotenv_path=dotenv_path)
+BOT_TOKEN=os.getenv('BOT_TOKEN')
 
 def main():
 
@@ -12,24 +18,24 @@ def main():
 
     updater.start_polling()
 
-updater = Updater(token='1686427047:AAHQSLOVFSow3IVT7xrgy34flkOXcmp_k_I', use_context=True)
+updater = Updater(token = BOT_TOKEN, use_context=True)
 
 dispatcher = updater.dispatcher
 
 
-# funtions
+# functions
 
 def start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Hei, olen Ella-Botti! Voit hakea Elävän arkiston artikkeleita komennolla /hae [aihe]. Esimerkiksi koira-artikkeleita saat komennolla \"/hae koira\"")
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Hej, jag är Boten-Ella. Du kan söka från Yle Arkivet med befallning /sok [tema]. Till exempel med \"/sok hund\" får du hundartiklar.")
 
 def language(update: Update, context: CallbackContext) -> None:
     keyboard = [
         [
             InlineKeyboardButton("Suomi", callback_data='fi'),
-            InlineKeyboardButton("Svenska", callback_data='sv'),
+            InlineKeyboardButton("Svenska", callback_data='se'),
         ]
     ]
-
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     update.message.reply_text('Millä kielellä haluat lukea artikkeleita?', reply_markup=reply_markup)
@@ -40,24 +46,35 @@ def button(update: Update, context: CallbackContext) -> None:
     query.answer()
     
     if(query.data == 'fi'):
-        language = 'suomi'
-    elif(query.data == 'sv'):
-        language = 'svenska'
+        language = 'fi'
+        search(context, update, language)
+    elif(query.data == 'se'):
+        language = 'se'
     else:
         language = 'et valinnut kieltä'
 
+
+    #search(update, context)
     query.edit_message_text(text=f"Valittu kieli: {language}")
 
-def search(update, context):
+def search(update, context, language):
     text = update.message.text
-    search_word = text[8:]
+    print(context.args)
+    search_word = context.args[0]
+
     i = 0
     for i in range(i, i+5):
         print(search_word)
-        results = search_keyword(search_word)
-        print(results)
+        results = search_keyword(search_word,language)
         
         context.bot.send_message(chat_id=update.effective_chat.id, text=results[i])
+    print(results)
+
+def hae(update, context):
+    search(update, context, "fi")
+
+def sok(update, context):
+    search(update, context, "se")
 
 def moro(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Kato Sauli terve!")
@@ -84,6 +101,12 @@ dispatcher.add_handler(start_handler)
 updater.dispatcher.add_handler(CommandHandler('language', language))
 
 updater.dispatcher.add_handler(CallbackQueryHandler(button))
+
+hae_handler = CommandHandler('hae', hae)
+dispatcher.add_handler(hae_handler)
+
+sok_handler = CommandHandler('sok', sok)
+dispatcher.add_handler(sok_handler)
 
 search_handler = CommandHandler('search', search)
 dispatcher.add_handler(search_handler)
