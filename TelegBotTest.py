@@ -26,8 +26,8 @@ dispatcher = updater.dispatcher
 # functions
 
 def start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Hei, olen Ella-Botti! Voit hakea Elävän arkiston artikkeleita komennolla /hae [aihe]. Esimerkiksi koira-artikkeleita saat komennolla \"/hae koira\"")
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Hej, jag är Boten-Ella. Du kan söka från Yle Arkivet med befallning /sok [tema]. Till exempel med \"/sok hund\" får du hundartiklar.")
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Hei, olen Ella-Botti! Voit hakea Elävän arkiston artikkeleita komennolla /hae [aihe]. Esimerkiksi koira-artikkeleita saat komennolla \"/hae koira\" Haku palauttaa 5 artikkelia")
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Hej, jag är Boten-Ella. Du kan söka från Yle Arkivet med befallning /sok [tema]. Till exempel med \"/sok hund\" får du hundartiklar. Sök returnerar 5 artiklar" )
 
 def language(update: Update, context: CallbackContext) -> None:
     keyboard = [
@@ -58,17 +58,23 @@ def button(update: Update, context: CallbackContext) -> None:
     query.edit_message_text(text=f"Valittu kieli: {language}")
 
 def search(update, context, language):
-    text = update.message.text
+    
     print(context.args)
     search_word = context.args[0]
 
     i = 0
-    for i in range(i, i+5):
-        print(search_word)
-        results = search_keyword(search_word,language)
+    results = search_keyword(search_word,language)
+    if len(results) == 0:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Ei hakutuloksia / Inga sökresultat")
+    else:
+        for i in range(i, i+5):
+            print(search_word)
         
-        context.bot.send_message(chat_id=update.effective_chat.id, text=results[i])
+        
+            context.bot.send_message(chat_id=update.effective_chat.id, text=results[i])
     print(results)
+    
+
 
 def hae(update, context):
     search(update, context, "fi")
@@ -91,6 +97,8 @@ def echo(update, context):
 
 def unknown(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, I didn't understand that command.")
+
+
 
 
 # handlers  
@@ -125,6 +133,7 @@ dispatcher.add_handler(echo_handler)
 
 unknown_handler = MessageHandler(Filters.command, unknown)
 dispatcher.add_handler(unknown_handler)
+
 
 if __name__ == "__main__":
     main()
