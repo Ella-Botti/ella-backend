@@ -11,6 +11,7 @@ dotenv_path = Path('./.env')
 load_dotenv(dotenv_path=dotenv_path)
 BOT_TOKEN=os.getenv('BOT_TOKEN')
 
+
 def main():
 
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -22,7 +23,7 @@ updater = Updater(token = BOT_TOKEN, use_context=True)
 
 dispatcher = updater.dispatcher
 
-
+lista = []
 # functions
 
 def start(update, context):
@@ -40,22 +41,9 @@ def language(update: Update, context: CallbackContext) -> None:
 
     update.message.reply_text('Millä kielellä haluat lukea artikkeleita?', reply_markup=reply_markup)
 
-def button(update: Update, context: CallbackContext) -> None:
-    query = update.callback_query
-
-    query.answer()
-    
-    if(query.data == 'fi'):
-        language = 'fi'
-        search(context, update, language)
-    elif(query.data == 'se'):
-        language = 'se'
-    else:
-        language = 'et valinnut kieltä'
 
 
-    #search(update, context)
-    query.edit_message_text(text=f"Valittu kieli: {language}")
+
 
 def search(update, context, language):
     text = update.message.text
@@ -69,7 +57,41 @@ def search(update, context, language):
         
         context.bot.send_message(chat_id=update.effective_chat.id, text=results[i])
     print(results)
+    global lista 
+    lista = results
+    show_more(update, context)
+    
 
+def show_more(update: Update, context : CallbackContext):
+    keyboard = [
+        [
+            InlineKeyboardButton("Näytä lisää", callback_data="s1")
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    update.message.reply_text("Näytä lisää tuloksia ", reply_markup=reply_markup)
+def button(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+
+    query.answer()
+    
+    if(query.data == 'fi'):
+        language = 'fi'
+        search(context, update, language)
+    elif(query.data == 'se'):
+        language = 'se'
+
+    elif(query.data == 's1'):
+        global lista
+        language = lista[5:10]
+    else:
+        language = 'et valinnut kieltä'
+
+
+    #search(update, context)
+    query.edit_message_text(text=f"{language}")
+    
 def hae(update, context):
     search(update, context, "fi")
 
