@@ -30,6 +30,21 @@ def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Hei, olen Ella-Botti! Voit hakea Elävän arkiston artikkeleita komennolla /hae [aihe]. Esimerkiksi koira-artikkeleita saat komennolla \"/hae koira\" Haku palauttaa 5 artikkelia")
     context.bot.send_message(chat_id=update.effective_chat.id, text="Hej, jag är Boten-Ella. Du kan söka från Yle Arkivet med befallning /sok [tema]. Till exempel med \"/sok hund\" får du hundartiklar. Sök returnerar 5 artiklar" )
 
+def apua(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="""
+🟣 Ella botilla voit hakea sisälöä eri tavoilla:
+
+
+🔴 /hae aloittaaksesi sisällön haku (Ohjattu haku kaikkeen sisältöön).
+
+🟠 /hae_artikkeli *hakusana*, jos haluat artikkelisisältöä hakusanalla.
+
+🟡 /hae_tv *hakusana*, jos etsit videosisältöä hakusanalla.
+
+🟢 /hae_radio *hakusana*, jos etsit radiosisältöä hakusanalla.
+
+🔵 /paivan_fakta antaa kiinnostavan historiallisen faktan""")
+
 def language(update: Update, context: CallbackContext) -> None:
     keyboard = [
         [
@@ -128,6 +143,9 @@ def unknown(update, context):
 
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
+
+apua_handler = CommandHandler('apua', apua)
+dispatcher.add_handler(apua_handler)
 
 updater.dispatcher.add_handler(CommandHandler('language', language))
 
