@@ -30,16 +30,22 @@ def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Hei, olen Ella-Botti! Voit hakea Elävän arkiston artikkeleita komennolla /hae_artikkeli [aihe]. Esimerkiksi koira-artikkeleita saat komennolla \"/hae_artikkeli koira\" Haku palauttaa 5 artikkelia")
     context.bot.send_message(chat_id=update.effective_chat.id, text="Hej, jag är Boten-Ella. Du kan söka från Yle Arkivet med befallning /sok [tema]. Till exempel med \"/sok hund\" får du hundartiklar. Sök returnerar 5 artiklar" )
 
-""" def language(update: Update, context: CallbackContext) -> None:
-    keyboard = [
-        [
-            InlineKeyboardButton("Suomi", callback_data='l1'),
-            InlineKeyboardButton("Svenska", callback_data='l2'),
-        ]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+def apua(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="""
+🔵  Ella botilla voit hakea sisälöä eri tavoilla:
 
-    update.message.reply_text('Millä kielellä haluat lukea artikkeleita?', reply_markup=reply_markup) """
+
+🔵  /hae aloittaaksesi sisällön haku (Ohjattu haku kaikkeen sisältöön).
+
+🔵  /hae_artikkeli *hakusana*, jos haluat artikkelisisältöä hakusanalla.
+
+🔵  /hae_tv *hakusana*, jos etsit videosisältöä hakusanalla.
+
+🔵  /hae_radio *hakusana*, jos etsit radiosisältöä hakusanalla.
+
+🔵  /paivan_fakta antaa kiinnostavan historiallisen faktan """)
+
+
 
 
 def search(update, context, language, word):
@@ -186,6 +192,19 @@ def unknown(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, I didn't understand that command.")
 
 
+    """ def language(update: Update, context: CallbackContext) -> None:
+
+    keyboard = [
+        [
+            InlineKeyboardButton("Suomi", callback_data='l1'),
+            InlineKeyboardButton("Svenska", callback_data='l2'),
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    update.message.reply_text('Millä kielellä haluat lukea artikkeleita?', reply_markup=reply_markup) """
+
+
 
 
 # handlers  
@@ -194,6 +213,9 @@ start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
 
 #updater.dispatcher.add_handler(CommandHandler('language', language))
+
+apua_handler = CommandHandler('apua', apua)
+dispatcher.add_handler(apua_handler)
 
 updater.dispatcher.add_handler(CallbackQueryHandler(button, pattern='s'))
 
