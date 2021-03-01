@@ -24,10 +24,10 @@ updater = Updater(token=BOT_TOKEN, use_context=True)
 
 dispatcher = updater.dispatcher
 
-lista = []
+#Asetetaan hakusana globaalisti talteen
+global_search_word = ""
+
 # functions
-
-
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id,
                              text="Hei, olen Ella-Botti! Voit hakea Elävän arkiston artikkeleita komennolla /hae_artikkeli [aihe]. Esimerkiksi koira-artikkeleita saat komennolla \"/hae_artikkeli koira\" Haku palauttaa 5 artikkelia")
@@ -51,35 +51,54 @@ def apua(update, context):
 🔵  /paivan_fakta antaa kiinnostavan historiallisen faktan """)
 
 
-def search(update, context, language, word):
+def search(update, context, language, word, position):
+    global global_search_word
+    #Hakee funktiokutsusta
     if word:
-        search_word = word
+        global_search_word = word
+
+
+
+    #Jos ei ole funktiokutsussa tai komennon mukana tuoduissa argumenteissa
+    elif not word and not context.args:
+        print(global_search_word)
+        
+
+    #Komennon mukana tulleissa argumenteissa
     elif not word:
         print(context.args)
-        search_word = context.args[0]
-    else:
-        context.bot.send_message(
-            chat_id=update.effective_chat.id, text="käytä hakusanaa")
+        global_search_word = context.args[0]
 
-    i = 0
-    results = search_keyword(search_word, language)
-    if len(results) == 0:
-        context.bot.send_message(
-            chat_id=update.effective_chat.id, text="Ei hakutuloksia / Inga sökresultat")
-    else:
-        for i in range(i, i+5):
-            print(search_word)
+    #Juokseva luku artikkeleille
+    i = position
+    
+    #Jos hakusana ei ole tyhjä, hakee tietokannasta
+    if len(global_search_word) > 1:
+        results = search_keyword(global_search_word, language)
 
+        #Jos hakutuloksia ei löydy
+        if len(results) == 0:
             context.bot.send_message(
-                chat_id=update.effective_chat.id, text=results[i])
-    print(results)
+                chat_id=update.effective_chat.id, text="Ei hakutuloksia / Inga sökresultat")
 
-    global lista
-    lista = results
-    show_more(update, context)
+        #Palauttaa seuraavat viisi tulosta
+        else:
+            for i in range(i, i+5):
+                print(global_search_word)
+
+                context.bot.send_message(
+                    chat_id=update.effective_chat.id, text=results[i])
+        show_more(update, context, 5)
+        print(results)
 
 
-def show_more(update: Update, context: CallbackContext):
+    #Kehoittaa käuyyäjää syöttämään haulle hakusanan
+    else:
+        context.bot.send_message(
+            chat_id=update.effective_chat.id, text="Käytä hakusanaa")
+
+#Antaa käyttäjälla napin jolla voi pyytää lisää hakutuloksia
+def show_more(update: Update, context: CallbackContext, position):
     keyboard = [
         [
             InlineKeyboardButton("Näytä lisää", callback_data='s1')
@@ -87,29 +106,20 @@ def show_more(update: Update, context: CallbackContext):
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    update.message.reply_text("Näytä lisää tuloksia ",
-                              reply_markup=reply_markup)
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Näytä lisää tuloksia ", reply_markup=reply_markup)
 
-
-def button(update: Update, context: CallbackContext) -> None:
+#Kuuntelee show_more nappia ja kutsuu hakua
+def handle_showmore(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
 
-    # query.answer()
-
-    """   if(query.data == 'l1'):
-        language = 'fi'
-        search(context, update, language)
-    elif(query.data == 'l2'):
-        language = 'se' """
-
+    global global_search_word
+    word = global_search_word
+    print(word)
+    
     if query.data == 's1':
-        global lista
-        language = lista[5:10]
-
-    # search(update, context)
-    query.edit_message_text(text=f"{language}")
-
-
+        search(update, context, "se", "", 5)
+    
+#Komento tv-ohjelmien hakemiseen hakusanalla
 def search_tv(update, context):
     if not context.args:
         context.bot.send_message(chat_id=update.effective_chat.id,
@@ -117,7 +127,7 @@ def search_tv(update, context):
     else:
         print("hae program,json tiedostosta tietoja")
 
-
+#Antaa kategoriavaihtoehdot
 def category(update, context):
     keyboard = [
         [
@@ -129,7 +139,7 @@ def category(update, context):
     context.bot.send_message(
         chat_id=update.effective_chat.id, text='Mitä etsit?', reply_markup=reply_markup)
 
-
+#Kuuntelee kategorioita ja kutsuu tagifunktioita
 def handle_category(update, context):
     query = update.callback_query
 
@@ -140,7 +150,7 @@ def handle_category(update, context):
         media_tag(update, context)
         query.edit_message_text(text='Etsitään mediaa...')
 
-
+#Antaa artikkelivaihtoehdot
 def articles_tag(update, context):
     keyboard = [
         [
@@ -149,21 +159,20 @@ def articles_tag(update, context):
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    context.bot.send_message(chat_id=update.effective_chat.id,
-                             text='Mitä uutisia haluat lukea?', reply_markup=reply_markup)
+    context.bot.send_message(chat_id=update.effective_chat.id, text='Mitä uutisia haluat lukea?', reply_markup=reply_markup)
 
-
+#Kuuntelee articles_tag ja tekee valinnan mukaisen haun
 def handle_articles_tag(update, context):
     query = update.callback_query
 
     if query.data == 'a1':
         print('kutsuu funktiota joka tietokannasta')
-        search(update, context, 'fi', 'kotimaa')
+        search(update, context, 'fi', 'kotimaa', 0)
         query.edit_message_text(text='Etsitään kotimaan uutisia...')
     elif query.data == 'a2':
         query.edit_message_text(text='Etsitään ulkomaiden uutisia...')
 
-
+#Antaa mediavaihtoehdot
 def media_tag(update, context):
     keyboard = [
         [
@@ -172,10 +181,9 @@ def media_tag(update, context):
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    context.bot.send_message(chat_id=update.effective_chat.id,
-                             text='Etsitkö radio- vai tv-ohjelmia?', reply_markup=reply_markup)
+    context.bot.send_message(chat_id=update.effective_chat.id, text='Etsitkö radio- vai tv-ohjelmia?', reply_markup=reply_markup)
 
-
+#Kuuntelee media_tag komentoa ja tekee valinnan mukaisen haun
 def handle_media_tag(update, context):
     query = update.callback_query
 
@@ -184,35 +192,15 @@ def handle_media_tag(update, context):
     elif query.data == 'm2':
         query.edit_message_text(text='Etsitään tv-ohjelmia...')
 
-
+#Komento artikkelin haulle hakusanalla
 def hae_artikkeli(update, context):
-    search(update, context, "fi", '')
+    search(update, context, "fi", '', 0)
 
-
+#Komento artikkelin haulle hakusanalla ruotsiksi
 def sok(update, context):
-    search(update, context, "se", '')
+    search(update, context, "se", '', 0)
 
-
-def moro(update, context):
-    context.bot.send_message(
-        chat_id=update.effective_chat.id, text="Kato Sauli terve!")
-
-
-def kukaoot(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="Moikka! Mä olen Ella-Botti ja autan sua etsimään sisältöä sun elämään. :)")
-
-
-def caps(update, context):
-    text_caps = ' '.join(context.args).upper()
-    context.bot.send_message(chat_id=update.effective_chat.id, text=text_caps)
-
-
-def echo(update, context):
-    context.bot.send_message(
-        chat_id=update.effective_chat.id, text=update.message.text)
-
-
+#Komento tuntemattomalle komentosyötteelle
 def unknown(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id,
                              text="Sorry, I didn't understand that command.")
@@ -239,7 +227,7 @@ dispatcher.add_handler(start_handler)
 apua_handler = CommandHandler('apua', apua)
 dispatcher.add_handler(apua_handler)
 
-updater.dispatcher.add_handler(CallbackQueryHandler(button, pattern='s'))
+updater.dispatcher.add_handler(CallbackQueryHandler(handle_showmore, pattern='s'))
 
 hae_handler = CommandHandler('hae_artikkeli', hae_artikkeli)
 dispatcher.add_handler(hae_handler)
@@ -264,18 +252,6 @@ updater.dispatcher.add_handler(
 
 search_handler = CommandHandler('search', search)
 dispatcher.add_handler(search_handler)
-
-moro_handler = CommandHandler('moro', moro)
-dispatcher.add_handler(moro_handler)
-
-kukaoot_handler = CommandHandler('kukaoot', kukaoot)
-dispatcher.add_handler(kukaoot_handler)
-
-caps_handler = CommandHandler('caps', caps)
-dispatcher.add_handler(caps_handler)
-
-echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
-dispatcher.add_handler(echo_handler)
 
 unknown_handler = MessageHandler(Filters.command, unknown)
 dispatcher.add_handler(unknown_handler)
