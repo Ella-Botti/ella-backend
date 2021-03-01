@@ -67,7 +67,7 @@ def search(update, context, language, word):
         context.bot.send_message(
             chat_id=update.effective_chat.id, text="Ei hakutuloksia / Inga sökresultat")
     else:
-        for i in range(i, i+5):
+        for i in reversed(range(i, i+5)):
             print(search_word)
 
             context.bot.send_message(
