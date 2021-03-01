@@ -69,23 +69,12 @@ def search(update, context, language, word, position):
         print(context.args)
         global_search_word = context.args[0]
 
-<<<<<<< HEAD
     #Juokseva luku artikkeleille
     i = position
     
     #Jos hakusana ei ole tyhjä, hakee tietokannasta
     if len(global_search_word) > 1:
         results = search_keyword(global_search_word, language)
-=======
-    i = 0
-    results = search_keyword(search_word, language)
-    if len(results) == 0:
-        context.bot.send_message(
-            chat_id=update.effective_chat.id, text="Ei hakutuloksia / Inga sökresultat")
-    else:
-        for i in reversed(range(i, i+5)):
-            print(search_word)
->>>>>>> 75873adf6077e5638e22ff8a021f859954b46765
 
         #Jos hakutuloksia ei löydy
         if len(results) == 0:
