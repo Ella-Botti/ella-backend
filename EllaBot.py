@@ -67,7 +67,7 @@ def search(update, context, language, word, position):
     #Komennon mukana tulleissa argumenteissa
     elif not word:
         print(context.args)
-        global_search_word = context.args[0]
+        global_search_word = ' '.join(context.args)
 
     #Juokseva luku artikkeleille
     i = position
