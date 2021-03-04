@@ -6,6 +6,7 @@ from newssearch import search_keyword
 from dotenv import load_dotenv
 import os
 from pathlib import Path
+from factOfTheDay import search_fact
 
 dotenv_path = Path('./.env')
 load_dotenv(dotenv_path=dotenv_path)
@@ -67,7 +68,7 @@ def search(update, context, language, word, position):
     #Komennon mukana tulleissa argumenteissa
     elif not word:
         print(context.args)
-        global_search_word = ' '.join(context.args)
+        global_search_word = context.args[0]
 
     #Juokseva luku artikkeleille
     i = position
@@ -126,6 +127,13 @@ def search_tv(update, context):
                                  text="Ei hakusanaa! Käytä komentoa /hae_tv *hakusana*")
     else:
         print("hae program,json tiedostosta tietoja")
+
+
+#Komento daily_fact haulle
+def daily_fact(update, context):
+    lista = search_fact()
+    context.bot.send_message(chat_id=update.effective_chat.id, text=random.choice(lista))
+
 
 #Antaa kategoriavaihtoehdot
 def category(update, context):
@@ -252,6 +260,9 @@ updater.dispatcher.add_handler(
 
 search_handler = CommandHandler('search', search)
 dispatcher.add_handler(search_handler)
+
+daily_fact_handler = CommandHandler("paivan_fakta", daily_fact)
+dispatcher.add_handler(daily_fact_handler)
 
 unknown_handler = MessageHandler(Filters.command, unknown)
 dispatcher.add_handler(unknown_handler)
