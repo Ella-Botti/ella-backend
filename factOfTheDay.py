@@ -15,5 +15,4 @@ def search_fact():
                     event = f"Tänään {day}.{month}, vuonna {data[key]['vuosi']} {data[key]['tapahtuma']}"
                     events.append(event)
         print(events)
-
-search_fact()
+        return(events)
