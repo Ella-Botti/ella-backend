@@ -196,9 +196,66 @@ def handle_media_tag(update, context):
     query = update.callback_query
 
     if query.data == 'm1':
+        radio_tag(update, context)
         query.edit_message_text(text='Etsitään radio-ohjelmia...')
     elif query.data == 'm2':
+        tv_tag(update, context)
         query.edit_message_text(text='Etsitään tv-ohjelmia...')
+
+#Antaa radiovaihtoehdot
+def radio_tag(update, context):
+    keyboard = [
+        [
+            InlineKeyboardButton("Musiikki", callback_data='r1'),
+            InlineKeyboardButton("Podcast", callback_data='r2'),
+            InlineKeyboardButton("Ajankohtaisohjelmat", callback_data='r3'),
+
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    context.bot.send_message(chat_id=update.effective_chat.id, text='Etsitkö musiikkia, podcasteja vai ajankohtaisohjelmia?', reply_markup=reply_markup)
+
+#Kuuntelee radio_tag komentoa ja tekee valinnan mukaisen haun
+def handle_radio_tag(update,context):
+    query = update.callback_query
+
+    if query.data == 'r1':
+        query.edit_message_text(text='Etsitään musiikkia...')
+    elif query.data == 'r2':
+        query.edit_message_text(text='Etsitään podcasteja...')
+    elif query.data == 'r3':
+        query.edit_message_text(text='Etsitään ajankohtaisohjelmia...')
+        #tähän haku tietokantaan
+
+#Antaa tv vaihtoehtoja
+def tv_tag(update, context):
+    keyboard = [
+        [
+            InlineKeyboardButton("Sarjat", callback_data='t1'),
+            InlineKeyboardButton("Elokuvat", callback_data='t2'),
+            InlineKeyboardButton("Dokumentit", callback_data='t3'),
+            InlineKeyboardButton("Urheilu", callback_data='t3')
+
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    context.bot.send_message(chat_id=update.effective_chat.id, text='Etsitkö sarjoja, elokuvia, dokumentteja vai urheilua?', reply_markup=reply_markup)
+
+#Kuuntelee tv_tag komentoa ja tekee valinnan mukaisen haun
+def handle_tv_tag(update,context):
+    query = update.callback_query
+
+    if query.data == 't1':
+        query.edit_message_text(text='Etsitään sarjoaj...')
+    elif query.data == 't2':
+        query.edit_message_text(text='Etsitään elokuvia...')
+    elif query.data == 't3':
+        query.edit_message_text(text='Etsitään dokumentteja...')
+    elif query.data == 't4':
+        query.edit_message_text(text='Etsitään urheilua...')
+        #tähän haku tietokantaan
+
+
 
 #Komento artikkelin haulle hakusanalla
 def hae_artikkeli(update, context):
@@ -257,6 +314,12 @@ updater.dispatcher.add_handler(
 
 updater.dispatcher.add_handler(
     CallbackQueryHandler(handle_media_tag, pattern='m'))
+
+updater.dispatcher.add_handler(
+    CallbackQueryHandler(handle_radio_tag, pattern='r'))
+
+updater.dispatcher.add_handler(
+    CallbackQueryHandler(handle_tv_tag, pattern='t'))
 
 search_handler = CommandHandler('search', search)
 dispatcher.add_handler(search_handler)
