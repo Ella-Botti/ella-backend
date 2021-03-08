@@ -6,30 +6,22 @@ import re
 
 def search_keyword(queryString, language):
     with open('./json/articles.json') as json_file:
-        results = []
         filteredResults = []
         data = json.load(json_file)
-        for i, j in data.items():
-            results.append(str(j))
+        for key in data:
+            #the function's parameter defines the language used in the search
+            if language == 'fi':
+                #finnish articles conveniently have a different URL-property than their swedish counterparts
+                #we can use this to check for language and only return finnish or swedish articles
+                if 'https://yle' in data[key]['URL']:
+                    if queryString in data[key]['TITLE']:
+                        #matching articles get appended to a list, which gets returned in the end
+                        filteredResults.append(f"{data[key]['TITLE']} - {data[key]['URL']}")
+            elif language == 'se':
+                if 'svenska' in data[key]['URL']:
+                    if queryString in data[key]['TITLE']:                  
+                        filteredResults.append(f"{data[key]['TITLE']} - {data[key]['URL']}")
+        print(filteredResults)
+        return(filteredResults)
 
-        # filters out swedish articles
-        if language == "fi":
-            for i in range(len(results)):
-                if queryString in results[i]:
-                    result = re.search("'TITLE':(.*), 'PUBLISHED'", results[i])
-                    url = re.search("(?P<url>https?://\S+)",
-                                    results[i]).group("url")
-                    if not "svenska" in url:
-                        filteredResults.append(result.group(1) + "  -  " + url)
-        # filters out finnish articles
-        else:
-            for i in range(len(results)):
-                if queryString in results[i]:
-                    result = re.search("'TITLE':(.*), 'PUBLISHED'", results[i])
-                    url = re.search("(?P<url>https?://\S+)",
-                                    results[i]).group("url")
-                    if not "https://yle" in url:
-                        filteredResults.append(result.group(1) + "  -  " + url)
-
-    print(filteredResults)
-    return(filteredResults)
+search_keyword('hund', 'se')
