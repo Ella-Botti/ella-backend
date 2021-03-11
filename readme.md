@@ -28,7 +28,8 @@ Of course, I am a great multitasker. Working with me is very simple:
     `echo "BOT_TOKEN=your_bot_token_here" > .env`
 
    Your `BOT_TOKEN` will be the same as `@BotFather` gave you for your own bot. 
-4. run the following commands: `pip3 install python-telegram-bot`
+
+4. run the following commands: `pip3 install python-telegram-bot` and `pip3 install -u python-dotenv`
 
 5. Run EllaBot.py, which starts the Telegram command listener. 
 
