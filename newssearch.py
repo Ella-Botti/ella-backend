@@ -1,27 +1,40 @@
 import json
 import re
+import psycopg2
 
 # language can either be fi or se
 
 
-def search_keyword(queryString, language):
-    with open('./json/articles.json') as json_file:
-        filteredResults = []
-        data = json.load(json_file)
-        for key in data:
-            #the function's parameter defines the language used in the search
-            if language == 'fi':
-                #finnish articles conveniently have a different URL-property than their swedish counterparts
-                #we can use this to check for language and only return finnish or swedish articles
-                if 'https://yle' in data[key]['URL']:
-                    if queryString in data[key]['TITLE']:
-                        #matching articles get appended to a list, which gets returned in the end
-                        filteredResults.append(f"{data[key]['TITLE']} - {data[key]['URL']}")
-            elif language == 'se':
-                if 'svenska' in data[key]['URL']:
-                    if queryString in data[key]['TITLE']:                  
-                        filteredResults.append(f"{data[key]['TITLE']} - {data[key]['URL']}")
-        print(filteredResults)
-        return(filteredResults)
 
-search_keyword('hund', 'se')
+def search_keyword(queryString, language):
+
+    conn = psycopg2.connect("dbname=assa user=mikko")
+
+    cur = conn.cursor()
+
+    print("connection succesful")
+
+    
+    #ajetaan tietokantakomento cursori.execute() metodilla. huomaa että tämä avaa automaattisesti transaktion, joka pitää vielä myöhemmin commitoida
+    SQL = f"SELECT title, url FROM articles WHERE title LIKE %s AND language='{language}';"
+    like_pattern = '%{}%'.format(queryString)
+    cur.execute(SQL,(like_pattern,))
+    #commitoidaan, jotta muutokset jäävät pysyväksi. kuten kaikissa transaktioissa, koodiin voi myös lisätä rollback-funktion
+    lista = cur.fetchall()
+    print(lista)
+    print("search succesful")
+    #tärkeää!
+    #suljetaan tietokantayhteys, sillä yhteyksiä voi olla vain rajallisesti!
+    conn.close()
+
+    filteredList = []
+
+    for item in lista:
+        
+        filteredList.append(item[0] + " - " + item[1])
+
+    return filteredList
+        
+
+
+search_keyword('hund', 'sv')
