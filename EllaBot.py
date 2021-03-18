@@ -118,7 +118,7 @@ def handle_showmore(update: Update, context: CallbackContext) -> None:
     print(word)
     
     if query.data == 's1':
-        search(update, context, "se", "", 5)
+        search(update, context, "sv", "", 5)
     
 #Komento tv-ohjelmien hakemiseen hakusanalla
 def search_tv(update, context):
@@ -263,7 +263,7 @@ def hae_artikkeli(update, context):
 
 #Komento artikkelin haulle hakusanalla ruotsiksi
 def sok(update, context):
-    search(update, context, "se", '', 0)
+    search(update, context, "sv", '', 0)
 
 #Komento tuntemattomalle komentosyötteelle
 def unknown(update, context):
