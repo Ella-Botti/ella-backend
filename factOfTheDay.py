@@ -1,20 +1,35 @@
-import json
 from datetime import date
+import psycopg2
+
+
 
 
 def search_fact():
-    with open('./json/calendar.json') as json_file:
-        data = json.load(json_file)
-        todays_date = date.today()
-        events = []
-        #compares all event dates and checks if the date matches with todays_date
-        for key in data:
-            if data[key]:
-                month = data[str(key)]['kuukausi']
-                day = data[str(key)]['paiva']
-                #if the dates match, append to events that have happened today
-                if month == str(todays_date.month) and day == str(todays_date.day):
-                    event = f"Tänään {day}.{month}, vuonna {data[key]['vuosi']} {data[key]['tapahtuma']}"
-                    events.append(event)
-        print(events)
-        return(events)
+    conn = psycopg2.connect("dbname=assa user=assa")
+
+    cur = conn.cursor()
+
+    print("connection succesful")
+
+    #ajetaan tietokantakomento cursori.execute() metodilla.
+
+    todays_date = date.today()
+    SQL = f"SELECT paiva, kuukausi, vuosi, tapahtuma FROM calendar WHERE kuukausi = {todays_date.month} AND paiva = {todays_date.day} ;"
+    cur.execute(SQL)
+    events = cur.fetchall()
+    print(events)
+    print("Search succesful")
+
+    #tärkeää!
+    #suljetaan tietokantayhteys, sillä yhteyksiä voi olla vain rajallisesti!
+    conn.close()
+
+    filteredEvents = []
+
+    for item in events:
+        event = f"Tänään {item[0]}.{item[1]}, vuonna {item[2]} {item[3]}"
+        filteredEvents.append(event)
+        
+    print(filteredEvents)
+    return filteredEvents
+    
