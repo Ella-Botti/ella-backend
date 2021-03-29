@@ -60,25 +60,16 @@ def apua(update, context):
 
 def search(update, context, language, word, position):
 
-
-<< << << < HEAD
-    global global_search_word
-    # Hakee funktiokutsusta
-== == == =
     global global_user_list
     # Hakee funktiokutsusta
->>>>>> > 13c206549a6cdd89e79908ac03e7006aaa10de83
+
     if word:
         global_user_list[update.effective_chat.id] = word
 
     # Jos ei ole funktiokutsussa tai komennon mukana tuoduissa argumenteissa
     elif not word and not context.args:
-<< << << < HEAD
-        print(global_search_word)
-== == == =
-        print(global_user_list[update.effective_chat.id])
 
->>>>>> > 13c206549a6cdd89e79908ac03e7006aaa10de83
+        print(global_user_list[update.effective_chat.id])
 
     # Komennon mukana tulleissa argumenteissa
     elif not word:
@@ -87,18 +78,11 @@ def search(update, context, language, word, position):
 
     # Juokseva luku artikkeleille
     i = position
-<< << << < HEAD
-
-    # Jos hakusana ei ole tyhjä, hakee tietokannasta
-    if len(global_search_word) > 1:
-        results = search_keyword(global_search_word, language)
-== == == =
 
     # Jos hakusana ei ole tyhjä, hakee tietokannasta
     if len(global_user_list[update.effective_chat.id]) > 1:
         results = search_keyword(
             global_user_list[update.effective_chat.id], language)
->>>>>> > 13c206549a6cdd89e79908ac03e7006aaa10de83
 
         # Jos hakutuloksia ei löydy
         if len(results) == 0:
@@ -139,7 +123,6 @@ def show_more(update: Update, context: CallbackContext, position):
 
 def handle_showmore(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
-
 
     word = global_user_list[update.effective_chat.id]
     print(word)
@@ -340,14 +323,9 @@ def handle_tv_tag(update, context):
 def hae_artikkeli(update, context):
     search(update, context, "fi", '', 0)
 
-<<<<<<< HEAD
-# Komento artikkelin haulle hakusanalla ruotsiksi
+# Komento artikkelin haulle ruotsiksi
 
 
-=======
-
-# Komento artikkelin haulle hakusanalla ruotsiksi
->>>>>>> 13c206549a6cdd89e79908ac03e7006aaa10de83
 def sok(update, context):
     search(update, context, "sv", '', 0)
 
