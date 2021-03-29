@@ -25,8 +25,13 @@ updater = Updater(token=BOT_TOKEN, use_context=True)
 
 dispatcher = updater.dispatcher
 
-#Asetetaan hakusana globaalisti talteen
-global_search_word = ""
+
+#Luodaan globaali dictionary johon tullaan tallentamaan hakuja chat.idn perusteella
+global_user_list = {
+    
+}
+
+
 
 # functions
 def start(update, context):
@@ -53,29 +58,29 @@ def apua(update, context):
 
 
 def search(update, context, language, word, position):
-    global global_search_word
+    global global_user_list
     #Hakee funktiokutsusta
     if word:
-        global_search_word = word
+        global_user_list[update.effective_chat.id] = word
 
 
 
     #Jos ei ole funktiokutsussa tai komennon mukana tuoduissa argumenteissa
     elif not word and not context.args:
-        print(global_search_word)
+        print(global_user_list[update.effective_chat.id])
         
 
     #Komennon mukana tulleissa argumenteissa
     elif not word:
         print(context.args)
-        global_search_word = context.args[0]
+        global_user_list[update.effective_chat.id] = context.args[0]
 
     #Juokseva luku artikkeleille
     i = position
     
     #Jos hakusana ei ole tyhjä, hakee tietokannasta
-    if len(global_search_word) > 1:
-        results = search_keyword(global_search_word, language)
+    if len(global_user_list[update.effective_chat.id]) > 1:
+        results = search_keyword(global_user_list[update.effective_chat.id], language)
 
         #Jos hakutuloksia ei löydy
         if len(results) == 0:
@@ -85,7 +90,7 @@ def search(update, context, language, word, position):
         #Palauttaa seuraavat viisi tulosta
         else:
             for i in range(i, i+5):
-                print(global_search_word)
+                print(global_user_list[update.effective_chat.id])
 
                 context.bot.send_message(
                     chat_id=update.effective_chat.id, text=results[i])
@@ -113,8 +118,8 @@ def show_more(update: Update, context: CallbackContext, position):
 def handle_showmore(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
 
-    global global_search_word
-    word = global_search_word
+
+    word = global_user_list[update.effective_chat.id]
     print(word)
     
     if query.data == 's1':
@@ -260,6 +265,7 @@ def handle_tv_tag(update,context):
 #Komento artikkelin haulle hakusanalla
 def hae_artikkeli(update, context):
     search(update, context, "fi", '', 0)
+
 
 #Komento artikkelin haulle hakusanalla ruotsiksi
 def sok(update, context):

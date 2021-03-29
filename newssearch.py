@@ -1,4 +1,3 @@
-import json
 import re
 import psycopg2
 
@@ -19,7 +18,7 @@ def search_keyword(queryString, language):
     SQL = f"SELECT title, url FROM articles WHERE title LIKE %s AND language='{language}';"
     like_pattern = '%{}%'.format(queryString)
     cur.execute(SQL,(like_pattern,))
-    #commitoidaan, jotta muutokset jäävät pysyväksi. kuten kaikissa transaktioissa, koodiin voi myös lisätä rollback-funktion
+    
     lista = cur.fetchall()
     print(lista)
     print("search succesful")
