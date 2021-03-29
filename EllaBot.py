@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 from factOfTheDay import search_fact
 from tagsearch import search_tag
+from apiSearchMedia import get_media
 
 dotenv_path = Path('./.env')
 load_dotenv(dotenv_path=dotenv_path)
@@ -134,11 +135,17 @@ def handle_showmore(update: Update, context: CallbackContext) -> None:
 
 
 def search_tv(update, context):
+    global global_user_list
     if not context.args:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text="Ei hakusanaa! Käytä komentoa /hae_tv *hakusana*")
     else:
-        print("hae program,json tiedostosta tietoja")
+        global_user_list[update.effective_chat.id] = context.args[0]
+        results = get_media(context.args[0], 'tvprogram')
+        i = 0
+        for i in range(i, i+5):
+            context.bot.send_message(
+                chat_id=update.effective_chat.id, text=results[i])
 
 
 # Komento daily_fact haulle
