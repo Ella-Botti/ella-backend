@@ -3,6 +3,7 @@ import urllib.request
 from dotenv import load_dotenv
 import os
 from pathlib import Path
+from urllib.parse import quote
 
 
 #.env käyttöön tarvittavat konfiguraatiot
@@ -14,7 +15,7 @@ API_ID = os.getenv('API_ID')
 
 def get_media(keyword, type) :
     #korvataan välilyönnin käyttö %20
-    keyword = keyword.replace(' ', '%20')
+    keyword = quote(keyword)
     with urllib.request.urlopen(f'https://external.api.yle.fi/v1/programs/items.json?q={keyword}&type={type}&app_key={API_KEY}&app_id={API_ID}') as response:
         data = response.read()
 
