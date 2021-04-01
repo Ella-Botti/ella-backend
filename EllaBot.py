@@ -141,7 +141,7 @@ def search_tv(update, context):
                                  text="Ei hakusanaa! Käytä komentoa /hae_tv *hakusana*")
     else:
         global_user_list[update.effective_chat.id] = context.args[0]
-        results = get_media(context.args[0], 'tvprogram')
+        results = get_media(' '.join(context.args), 'tvprogram')
         i = 0
         for i in range(i, i+5):
             context.bot.send_message(
