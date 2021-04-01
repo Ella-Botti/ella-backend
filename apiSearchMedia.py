@@ -31,3 +31,21 @@ def get_media(keyword, type) :
     return filteredList
 
 get_media('avara luonto', 'tvprogram')
+
+def get_tag(type, category):
+    with urllib.request.urlopen(f'https://external.api.yle.fi/v1/programs/items.json?type={type}&category={category}&app_key={API_KEY}&app_id={API_ID}') as response:
+        data = response.read()
+
+    media = json.loads(data)
+   
+    filteredList = []
+
+    #luodaan media-olio ja lis  t    n listaan
+    for item in media['data']:
+        media_item = f'{item["title"]} - http://areena.yle.fi/{item["id"]}'   
+        filteredList.append(media_item)
+   
+    return filteredList
+
+ 
+get_tag('tvprogram', '5-131')
