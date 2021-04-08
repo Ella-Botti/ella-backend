@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 from factOfTheDay import search_fact
 from tagsearch import search_tag
-from apiSearchMedia import get_media
+from apiSearchMedia import get_media, get_tag
 
 dotenv_path = Path('./.env')
 load_dotenv(dotenv_path=dotenv_path)
@@ -58,6 +58,26 @@ def apua(update, context):
 
 🔵  /paivan_fakta antaa kiinnostavan historiallisen faktan """)
 
+def search_radio(update, context):
+    global global_user_list
+    if not context.args:
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text="Ei hakusanaa! Käytä komentoa /hae_radio *hakusana*")
+    else:
+        global_user_list[update.effective_chat.id] = context.args[0]
+        results = get_media(' '.join(context.args), 'radioprogram')
+        i = 0
+        for i in range(i, i+5):
+            context.bot.send_message(
+                chat_id=update.effective_chat.id, text=results[i])
+
+#hakee mediaa api rajapinnasta tagin (tyyppi ja kategoria) perusteella
+def tag_search_media(update, context, type, category):
+    results = get_tag(type, category)
+    i = 0
+    for i in range(i, i+5):
+        context.bot.send_message(
+            chat_id=update.effective_chat.id, text=results[i])
 
 def search(update, context, language, word, position):
     try:
@@ -202,7 +222,7 @@ def articles_tag(update, context):
                              text='Mitä uutisia haluat lukea?', reply_markup=reply_markup)
 
 
-def tag_search(update, context, tag):
+def tag_search_articles(update, context, tag):
     results = search_tag(tag)
     i = 0
     for i in range(i, i+5):
@@ -216,25 +236,25 @@ def handle_articles_tag(update, context):
 
     if query.data == 'a1':
         query.edit_message_text(text='Etsitään kotimaan uutisia...')
-        tag_search(update, context, 'kotimaa')
+        tag_search_articles(update, context, 'kotimaa')
     elif query.data == 'a2':
         query.edit_message_text(text='Etsitään ulkomaiden uutisia...')
-        tag_search(update, context, 'ulkomaat')
+        tag_search_articles(update, context, 'ulkomaat')
     elif query.data == 'a3':
         query.edit_message_text(text='Etsitään politiikan uutisia...')
-        tag_search(update, context, 'politiikka')
+        tag_search_articles(update, context, 'politiikka')
     elif query.data == 'a4':
         query.edit_message_text(text='Etsitään urheilu uutisia...')
-        tag_search(update, context, 'urheilu')
+        tag_search_articles(update, context, 'urheilu')
     elif query.data == 'a5':
         query.edit_message_text(text='Etsitään talous uutisia...')
-        tag_search(update, context, 'talous')
+        tag_search_articles(update, context, 'talous')
     elif query.data == 'a6':
         query.edit_message_text(text='Etsitään tiede uutisia...')
-        tag_search(update, context, 'tiede')
+        tag_search_articles(update, context, 'tiede')
     elif query.data == 'a7':
         query.edit_message_text(text='Etsitään kulttuuri uutisia...')
-        tag_search(update, context, 'kulttuuri')
+        tag_search_articles(update, context, 'kulttuuri')
 
 # Antaa mediavaihtoehdot
 
@@ -270,7 +290,7 @@ def radio_tag(update, context):
     keyboard = [
         [
             InlineKeyboardButton("Musiikki", callback_data='r1'),
-            InlineKeyboardButton("Podcast", callback_data='r2'),
+            InlineKeyboardButton("Klassinen musiikki", callback_data='r2'),
             InlineKeyboardButton("Ajankohtaisohjelmat", callback_data='r3'),
 
         ]
@@ -286,10 +306,13 @@ def handle_radio_tag(update, context):
     query = update.callback_query
 
     if query.data == 'r1':
+        tag_search_media(update, context, 'radioprogram', '5-143')
         query.edit_message_text(text='Etsitään musiikkia...')
     elif query.data == 'r2':
-        query.edit_message_text(text='Etsitään podcasteja...')
+        tag_search_media(update, context, 'radioprogram', '5-146')
+        query.edit_message_text(text='Etsitään klassista musiikkia...')
     elif query.data == 'r3':
+        tag_search_media(update, context, 'radioprogram', '5-151')
         query.edit_message_text(text='Etsitään ajankohtaisohjelmia...')
         # tähän haku tietokantaan
 
@@ -299,10 +322,11 @@ def handle_radio_tag(update, context):
 def tv_tag(update, context):
     keyboard = [
         [
-            InlineKeyboardButton("Sarjat", callback_data='t1'),
-            InlineKeyboardButton("Elokuvat", callback_data='t2'),
-            InlineKeyboardButton("Dokumentit", callback_data='t3'),
-            InlineKeyboardButton("Urheilu", callback_data='t3')
+            InlineKeyboardButton("Kotimaiset sarjat", callback_data='t1'),
+            InlineKeyboardButton("Ulkomaiset sarjat", callback_data='t2'),
+            InlineKeyboardButton("Elokuvat", callback_data='t3'),
+            InlineKeyboardButton("Dokumentit", callback_data='t4'),
+            InlineKeyboardButton("Urheilu", callback_data='t5')
 
         ]
     ]
@@ -317,12 +341,19 @@ def handle_tv_tag(update, context):
     query = update.callback_query
 
     if query.data == 't1':
-        query.edit_message_text(text='Etsitään sarjoaj...')
+        tag_search_media(update, context, 'tvprogram', '5-133')
+        query.edit_message_text(text='Etsitään kotimaisia sarjoja...')
     elif query.data == 't2':
-        query.edit_message_text(text='Etsitään elokuvia...')
+        tag_search_media(update, context, 'tvprogram', '5-134')
+        query.edit_message_text(text='Etsitään ulkomaisia sarjoja...')
     elif query.data == 't3':
-        query.edit_message_text(text='Etsitään dokumentteja...')
+        tag_search_media(update, context, 'tvprogram', '5-135')
+        query.edit_message_text(text='Etsitään elokuvia...')
     elif query.data == 't4':
+        tag_search_media(update, context, 'tvprogram', '5-148')
+        query.edit_message_text(text='Etsitään dokumentteja...')
+    elif query.data == 't5':
+        tag_search_media(update, context, 'tvprogram', '5-164')
         query.edit_message_text(text='Etsitään urheilua...')
         # tähän haku tietokantaan
 
@@ -362,6 +393,9 @@ def unknown(update, context):
 # handlers
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
+
+search_radio_handler = CommandHandler("hae_radio", search_radio)
+dispatcher.add_handler(search_radio_handler)
 
 # updater.dispatcher.add_handler(CommandHandler('language', language))
 
