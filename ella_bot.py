@@ -60,50 +60,51 @@ def apua(update, context):
 
 
 def search(update, context, language, word, position):
+    try:
+        global global_user_list
+        # Hakee funktiokutsusta
 
-    global global_user_list
-    # Hakee funktiokutsusta
+        if word:
+            global_user_list[update.effective_chat.id] = [word, language, position]
+       
+        # Jos ei ole funktiokutsussa tai komennon mukana tuoduissa argumenteissa
+        elif not word and not context.args:
 
-    if word:
-        global_user_list[update.effective_chat.id] = [word, language, position]
+            print(global_user_list[update.effective_chat.id])
 
-    # Jos ei ole funktiokutsussa tai komennon mukana tuoduissa argumenteissa
-    elif not word and not context.args:
+        # Komennon mukana tulleissa argumenteissa
+        elif not word:
+            print(context.args)
+            global_user_list[update.effective_chat.id] = [context.args[0], language, position]
 
-        print(global_user_list[update.effective_chat.id])
+        # Juokseva luku artikkeleille
+        i = position
 
-    # Komennon mukana tulleissa argumenteissa
-    elif not word:
-        print(context.args)
-        global_user_list[update.effective_chat.id] = [context.args[0], language, position]
+        # Jos hakusana ei ole tyhjä, hakee tietokannasta
+        if len(global_user_list[update.effective_chat.id][0]) > 1:
+            results = search_keyword(
+                global_user_list[update.effective_chat.id][0], language)
 
-    # Juokseva luku artikkeleille
-    i = position
-
-    # Jos hakusana ei ole tyhjä, hakee tietokannasta
-    if len(global_user_list[update.effective_chat.id][0]) > 1:
-        results = search_keyword(
-            global_user_list[update.effective_chat.id][0], language)
-
-        # Jos hakutuloksia ei löydy
-        if len(results) == 0:
-            context.bot.send_message(
-                chat_id=update.effective_chat.id, text="Ei hakutuloksia / Inga sökresultat")
-
-        # Palauttaa seuraavat viisi tulosta
-        else:
-            i = global_user_list[update.effective_chat.id][2]
-            for i in range(i, i+5):
+            # Jos hakutuloksia ei löydy
+            if len(results) == 0:
                 context.bot.send_message(
-                    chat_id=update.effective_chat.id, text=results[i])
-                global_user_list[update.effective_chat.id][2] = i+1
-            show_more(update, context, i)
-        print(results)
+                    chat_id=update.effective_chat.id, text="Ei hakutuloksia / Inga sökresultat")
 
-    # Kehoittaa käuyyäjää syöttämään haulle hakusanan
-    else:
-        context.bot.send_message(
-            chat_id=update.effective_chat.id, text="Käytä hakusanaa")
+            # Palauttaa seuraavat viisi tulosta
+            else:
+                i = global_user_list[update.effective_chat.id][2]
+                for i in range(i, i+5):
+                    context.bot.send_message(
+                        chat_id=update.effective_chat.id, text=results[i])
+                    global_user_list[update.effective_chat.id][2] = i+1
+                show_more(update, context, i)
+            print(results)
+ # Kehoittaa käuyyäjää syöttämään haulle hakusanan
+    except KeyError:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Käytä hakusanaa, esimerkiksi '/hae_artikkeli koira'")
+    except IndexError:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Olet ehtinyt lukea kaikki artikkelini tästä aiheesta, kokeile hakea jollain toisella hakusanalla!")
+
 
 # Antaa käyttäjälla napin jolla voi pyytää lisää hakutuloksia
 
