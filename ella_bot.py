@@ -65,7 +65,7 @@ def search(update, context, language, word, position):
     # Hakee funktiokutsusta
 
     if word:
-        global_user_list[update.effective_chat.id] = [word, language]
+        global_user_list[update.effective_chat.id] = [word, language, position]
 
     # Jos ei ole funktiokutsussa tai komennon mukana tuoduissa argumenteissa
     elif not word and not context.args:
@@ -75,7 +75,7 @@ def search(update, context, language, word, position):
     # Komennon mukana tulleissa argumenteissa
     elif not word:
         print(context.args)
-        global_user_list[update.effective_chat.id] = [context.args[0], language]
+        global_user_list[update.effective_chat.id] = [context.args[0], language, position]
 
     # Juokseva luku artikkeleille
     i = position
@@ -92,10 +92,12 @@ def search(update, context, language, word, position):
 
         # Palauttaa seuraavat viisi tulosta
         else:
+            i = global_user_list[update.effective_chat.id][2]
             for i in range(i, i+5):
                 context.bot.send_message(
                     chat_id=update.effective_chat.id, text=results[i])
-        show_more(update, context, 5)
+                global_user_list[update.effective_chat.id][2] = i+1
+        show_more(update, context, i)
         print(results)
 
     # Kehoittaa käuyyäjää syöttämään haulle hakusanan
@@ -127,7 +129,7 @@ def handle_showmore(update: Update, context: CallbackContext) -> None:
     print(word)
 
     if query.data == 's1':
-        search(update, context, global_user_list[update.effective_chat.id][1], "", 5)
+        search(update, context, global_user_list[update.effective_chat.id][1], "", global_user_list[update.effective_chat.id][2])
 
 # Komento tv-ohjelmien hakemiseen hakusanalla
 
