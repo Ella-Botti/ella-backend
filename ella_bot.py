@@ -97,7 +97,7 @@ def search(update, context, language, word, position):
                 context.bot.send_message(
                     chat_id=update.effective_chat.id, text=results[i])
                 global_user_list[update.effective_chat.id][2] = i+1
-        show_more(update, context, i)
+            show_more(update, context, i)
         print(results)
 
     # Kehoittaa käuyyäjää syöttämään haulle hakusanan
