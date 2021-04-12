@@ -38,7 +38,13 @@ global_user_list = {
 
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="Hei, olen Ella-Botti! Voit hakea Elävän arkiston artikkeleita komennolla /hae_artikkeli [aihe]. Esimerkiksi koira-artikkeleita saat komennolla \"/hae_artikkeli koira\" Haku palauttaa 5 artikkelia")
+                             text="""
+                             Hei, olen Ella-Botti! 
+                             Voit hakea Elävän arkiston artikkeleita komennolla: 
+                             /hae_artikkeli [aihe]. Esimerkiksi koira-artikkeleita saat komennolla: 
+                             \"/hae_artikkeli koira\" Haku palauttaa 5 artikkelia.
+                             Komennolla /apua saat listan kaikista komennoista
+                             """)
     context.bot.send_message(chat_id=update.effective_chat.id,
                              text="Hej, jag är Boten-Ella. Du kan söka från Yle Arkivet med befallning /sok [tema]. Till exempel med \"/sok hund\" får du hundartiklar. Sök returnerar 5 artiklar")
 
