@@ -2,13 +2,13 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Callback
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 import logging
 import random
-from newssearch import search_keyword
+from news_search import search_keyword
 from dotenv import load_dotenv
 import os
 from pathlib import Path
-from factOfTheDay import search_fact
-from tagsearch import search_tag
-from apiSearchMedia import get_media, get_tag
+from fact_of_the_day import search_fact
+from tag_search import search_tag
+from api_search_media import get_media, get_tag
 
 dotenv_path = Path('./.env')
 load_dotenv(dotenv_path=dotenv_path)
