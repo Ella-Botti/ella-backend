@@ -26,13 +26,13 @@ def search_keyword(queryString, language):
     #suljetaan tietokantayhteys, sillä yhteyksiä voi olla vain rajallisesti!
     conn.close()
 
-    filteredList = []
+    filtered_list = []
 
     for item in lista:
         
-        filteredList.append(item[0] + " - " + item[1])
+        filtered_list.append(item[0] + " - " + item[1])
 
-    return filteredList
+    return filtered_list
         
 
 

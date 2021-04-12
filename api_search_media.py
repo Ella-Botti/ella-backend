@@ -21,14 +21,14 @@ def get_media(keyword, type) :
 
     media = json.loads(data)
 
-    filteredList = []
+    filtered_list = []
 
     #luodaan media-olio ja lisätään listaan
     for item in media['data']:
         media_item = f'{item["title"]["fi"]} - http://areena.yle.fi/{item["id"]}'   
-        filteredList.append(media_item)
+        filtered_list.append(media_item)
 
-    return filteredList
+    return filtered_list
 
 get_media('avara luonto', 'tvprogram')
 
@@ -38,14 +38,14 @@ def get_tag(type, category):
 
     media = json.loads(data)
    
-    filteredList = []
+    filtered_list = []
 
     #luodaan media-olio ja lis  t    n listaan
     for item in media['data']:
         media_item = f'{item["title"]} - http://areena.yle.fi/{item["id"]}'   
-        filteredList.append(media_item)
+        filtered_list.append(media_item)
    
-    return filteredList
+    return filtered_list
 
  
 get_tag('tvprogram', '5-131')

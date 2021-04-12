@@ -24,12 +24,12 @@ def search_fact():
     #suljetaan tietokantayhteys, sillä yhteyksiä voi olla vain rajallisesti!
     conn.close()
 
-    filteredEvents = []
+    filtered_events = []
 
     for item in events:
         event = f"Tänään {item[0]}.{item[1]}, vuonna {item[2]} {item[3]}"
-        filteredEvents.append(event)
+        filtered_events.append(event)
         
-    print(filteredEvents)
-    return filteredEvents
+    print(filtered_events)
+    return filtered_events
     

@@ -2,12 +2,12 @@ import csv
 import json
 
 
-def make_json(csvFilePath, jsonFilePath):
+def make_json(csv_file_path, json_file_path):
     data = {}
 
-    with open(csvFilePath, encoding='utf-8') as csvf:
-        csvReader = csv.DictReader(csvf)
-        for rows in csvReader:
+    with open(csv_file_path, encoding='utf-8') as csvf:
+        csv_reader = csv.DictReader(csvf)
+        for rows in csv_reader:
 
             # Assuming a column named 'No' to
             # be the primary key
@@ -16,7 +16,7 @@ def make_json(csvFilePath, jsonFilePath):
 
         # Open a json writer, and use the json.dumps()
         # function to dump data
-        with open(jsonFilePath, 'w', encoding='utf-8') as jsonf:
+        with open(json_file_path, 'w', encoding='utf-8') as jsonf:
             jsonf.write(json.dumps(data, indent=4))
 
 # Driver Code
@@ -24,14 +24,14 @@ def make_json(csvFilePath, jsonFilePath):
 
 # Decide the two file paths according to your
 # computer system
-csvFilePath = r'/csv/articles.csv'
-jsonFilePath = r'/json/articles.json'
+csv_file_path = r'/csv/articles.csv'
+json_file_path = r'/json/articles.json'
 
 # Call the make_json function
-make_json(csvFilePath, jsonFilePath)
+make_json(csv_file_path, json_file_path)
 
 
-with open(jsonFilePath) as f:
+with open(json_file_path) as f:
     datajson = json.load(f)
 
 print(datajson['7-1266481'])
