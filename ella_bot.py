@@ -36,11 +36,13 @@ global_user_list = {
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id,text="""
 Hei, olen Ella-Botti! 
-Voit hakea Elävän arkiston artikkeleita komennolla /artikkeli *hakusana*.
+Voit hakea Elävän arkiston artikkeleita komennolla
+/artikkeli *hakusana*.
 Esimerkiksi koira-artikkeleita saat komennolla \"/artikkeli koira\"
 Hakusanana voit käyttää myös useampaa sanaa.
 
-Voit hakea elävän arkiston media ja radio sisältöä hakusanoilla /tv *hakusana* ja /radio *hakusana*.
+Voit hakea elävän arkiston media ja radio sisältöä hakusanoilla
+/tv *hakusana* ja /radio *hakusana*.
 
 Komennolla /help saat listan kaikista komennoista. 
 Aloita kokeilemalla /fakta komentoa. 
@@ -48,7 +50,7 @@ Aloita kokeilemalla /fakta komentoa.
 
     context.bot.send_message(chat_id=update.effective_chat.id,text=
 """Hej, jag är Boten-Ella. Du kan söka från Yle Arkivet med befallning /sok *slagord*.
-Till exempel med \"/sok hund\" får du hundartiklar. Sök returnerar 5 artiklar.
+Till exempel med \"/sok hund\" får du hundartiklar.
 Tyvärr fungerar bara artikelsökningen just nu på svenska.
 """)
 
