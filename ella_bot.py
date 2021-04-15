@@ -112,28 +112,33 @@ def search(update, context, language, word, position):
 
 # Hakee artikkeleita tägien perusteella tietokannasta
 def tag_search_articles(update, context, tag):
-    results = search_tag(tag)
-    i = 0
-    for i in range(i, i+5):
-        context.bot.send_message(
-            chat_id=update.effective_chat.id, text=results[i])
-
-
-# Hakee tv sisältöä api rajapinnasta hakusanan perusteella 
-def search_tv(update, context):
-    global global_user_list
-
-    if not context.args:
-        context.bot.send_message(chat_id=update.effective_chat.id,
-                                 text="Ei hakusanaa! Käytä komentoa /hae_tv *hakusana*")
-    else:
-        global_user_list[update.effective_chat.id][0] = context.args[0]
-        results = get_media(' '.join(context.args), 'tvprogram')
+    try:
+        results = search_tag(tag)
         i = 0
         for i in range(i, i+5):
             context.bot.send_message(
                 chat_id=update.effective_chat.id, text=results[i])
+    except IndexError:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Olet ehtinyt lukea kaikki artikkelini tästä aiheesta, kokeile hakea jollain toisella hakusanalla!")
 
+
+# Hakee tv sisältöä api rajapinnasta hakusanan perusteella 
+def search_tv(update, context):
+    try:
+        global global_user_list
+
+        if not context.args:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                    text="Ei hakusanaa! Käytä komentoa /hae_tv *hakusana*")
+        else:
+            global_user_list[update.effective_chat.id][0] = context.args[0]
+            results = get_media(' '.join(context.args), 'tvprogram')
+            i = 0
+            for i in range(i, i+5):
+                context.bot.send_message(
+                    chat_id=update.effective_chat.id, text=results[i])
+    except IndexError:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="En löytänyt enempää kuin nämä, kokeile toista hakusanaa!")
 
 # Hakee radio sisältöä api rajapinnasta hakusanan perusteella
 def search_radio(update, context):
@@ -153,11 +158,14 @@ def search_radio(update, context):
 
 # Hakee mediaa api rajapinnasta tagin (tyyppi ja kategoria) perusteella
 def tag_search_media(update, context, type, category):
-    results = get_tag(type, category)
-    i = 0
-    for i in range(i, i+5):
-        context.bot.send_message(
-            chat_id=update.effective_chat.id, text=results[i])
+    try:
+        results = get_tag(type, category)
+        i = 0
+        for i in range(i, i+5):
+            context.bot.send_message(
+                chat_id=update.effective_chat.id, text=results[i])
+    except IndexError:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="En löytänyt enempää kuin nämä, kokeile toista hakusanaa!")
 
 
 # Antaa käyttäjälle napin jolla voi pyytää lisää hakutuloksia
