@@ -29,7 +29,5 @@ def search_fact():
     for item in events:
         event = f"Tänään {item[0]}.{item[1]}, vuonna {item[2]} {item[3]}"
         filtered_events.append(event)
-        
-    print(filtered_events)
     return filtered_events
     

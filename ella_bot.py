@@ -101,7 +101,7 @@ def search(update, context, language, word, position):
                         chat_id=update.effective_chat.id, text=results[i])
                     global_user_list[update.effective_chat.id][2] = i+1
                 show_more(update, context, i)
-            print(results)
+            print(update.effective_chat.id)
 
  # Kehoittaa käuyyäjää syöttämään haulle hakusanan
     except KeyError:
