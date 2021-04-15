@@ -18,7 +18,6 @@ def get_media(keyword, type) :
     keyword = quote(keyword)
     with urllib.request.urlopen(f'https://external.api.yle.fi/v1/programs/items.json?q={keyword}&type={type}&app_key={API_KEY}&app_id={API_ID}') as response:
         data = response.read()
-
     media = json.loads(data)
 
     filtered_list = []
@@ -29,8 +28,6 @@ def get_media(keyword, type) :
         filtered_list.append(media_item)
 
     return filtered_list
-
-get_media('avara luonto', 'tvprogram')
 
 def get_tag(type, category):
     with urllib.request.urlopen(f'https://external.api.yle.fi/v1/programs/items.json?type={type}&category={category}&app_key={API_KEY}&app_id={API_ID}') as response:
@@ -44,8 +41,5 @@ def get_tag(type, category):
     for item in media['data']:
         media_item = f'{item["title"]} - http://areena.yle.fi/{item["id"]}'   
         filtered_list.append(media_item)
-   
     return filtered_list
 
- 
-get_tag('tvprogram', '5-131')
