@@ -17,7 +17,7 @@ def search_fact():
     SQL = f"SELECT paiva, kuukausi, vuosi, tapahtuma FROM calendar WHERE kuukausi = {todays_date.month} AND paiva = {todays_date.day} ;"
     cur.execute(SQL)
     events = cur.fetchall()
-    print(events)
+    print(f"Found {len(events)} events for today")
     print("Search succesful")
 
     #tärkeää!
