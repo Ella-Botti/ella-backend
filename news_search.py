@@ -7,11 +7,9 @@ import psycopg2
 
 def search_keyword(queryString, language):
 
-    conn = psycopg2.connect("dbname=assa user=mikko")
+    conn = psycopg2.connect("dbname=assa user=assa")
 
     cur = conn.cursor()
-
-    print("connection succesful")
 
     
     #ajetaan tietokantakomento cursori.execute() metodilla. huomaa että tämä avaa automaattisesti transaktion, joka pitää vielä myöhemmin commitoida
@@ -20,20 +18,15 @@ def search_keyword(queryString, language):
     cur.execute(SQL,(like_pattern,))
     
     lista = cur.fetchall()
-    print(lista)
-    print("search succesful")
+    print(f"Found {len(lista)} articles")
     #tärkeää!
     #suljetaan tietokantayhteys, sillä yhteyksiä voi olla vain rajallisesti!
     conn.close()
 
-    filtered_list = []
+    filteredList = []
 
     for item in lista:
         
-        filtered_list.append(item[0] + " - " + item[1])
+        filteredList.append(item[0] + " - " + item[1])
 
-    return filtered_list
-        
-
-
-search_keyword('hund', 'sv')
+    return filteredList
