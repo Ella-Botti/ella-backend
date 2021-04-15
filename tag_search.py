@@ -16,7 +16,7 @@ def search_tag(queryTag):
     cur.execute(SQL,)
     # commitoidaan, jotta muutokset jäävät pysyväksi. kuten kaikissa transaktioissa, koodiin voi myös lisätä rollback-funktion
     lista = cur.fetchall()
-    print(lista)
+    print(f"Found {len(lista)} articles")
     print("search succesful")
     # tärkeää!
     # suljetaan tietokantayhteys, sillä yhteyksiä voi olla vain rajallisesti!
@@ -29,6 +29,3 @@ def search_tag(queryTag):
         filtered_list.append(item[0] + " - " + item[1])
 
     return filtered_list
-
-
-search_tag('Amerika')
