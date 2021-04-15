@@ -128,7 +128,7 @@ def search_tv(update, context):
         global global_user_list
 
         if context.args[0]:
-            global_user_list[update.effective_chat.id][0] = context.args[0]
+            global_user_list[update.effective_chat.id] = context.args[0]
             results = get_media(' '.join(context.args), 'tvprogram')
             i = 0
             for i in range(i, i+5):
