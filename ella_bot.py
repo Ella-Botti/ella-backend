@@ -34,33 +34,34 @@ global_user_list = {
 
 # functions
 def start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="""
-                             Hei, olen Ella-Botti! 
-                             Voit hakea Elävän arkiston artikkeleita komennolla: 
-                             /hae_artikkeli [aihe]. Esimerkiksi koira-artikkeleita saat komennolla: 
-                             \"/hae_artikkeli koira\" Haku palauttaa 5 artikkelia.
-                             Komennolla /apua saat listan kaikista komennoista
-                             """)
-    context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="Hej, jag är Boten-Ella. Du kan söka från Yle Arkivet med befallning /sok [tema]. Till exempel med \"/sok hund\" får du hundartiklar. Sök returnerar 5 artiklar")
+    context.bot.send_message(chat_id=update.effective_chat.id,text="""
+Hei, olen Ella-Botti! 
+Voit hakea Elävän arkiston artikkeleita komennolla /artikkeli *hakusana*.
+Esimerkiksi koira-artikkeleita saat komennolla \"/artikkeli koira\"
+Hakusanana voit käyttää myös useampaa sanaa.
+
+Voit hakea elävän arkiston media ja radio sisältöä hakusanoilla /tv *hakusana* ja /radio *hakusana*.
+
+Komennolla /help saat listan kaikista komennoista. 
+Aloita kokeilemalla /fakta komentoa. 
+""")
+
+    context.bot.send_message(chat_id=update.effective_chat.id,text=
+"""Hej, jag är Boten-Ella. Du kan söka från Yle Arkivet med befallning /sok *slagord*.
+Till exempel med \"/sok hund\" får du hundartiklar. Sök returnerar 5 artiklar.
+Tyvärr fungerar bara artikelsökningen just nu på svenska.
+""")
 
 
-def apua(update, context):
+def help(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="""
-🔵  Ella botilla voit hakea sisälöä eri tavoilla:
+Ella botilla voit hakea sisälöä eri tavoilla:
 
-
-🔵  /hae aloittaaksesi sisällön haku (Ohjattu haku kaikkeen sisältöön).
-
-🔵  /hae_artikkeli *hakusana*, jos haluat artikkelisisältöä hakusanalla.
-
-🔵  /hae_tv *hakusana*, jos etsit videosisältöä hakusanalla.
-
-🔵  /hae_radio *hakusana*, jos etsit radiosisältöä hakusanalla.
-
-🔵  /paivan_fakta antaa kiinnostavan historiallisen faktan """)
-
+/hae aloittaaksesi sisällön haku (Ohjattu haku kaikkeen sisältöön). 
+/artikkeli *hakusana*, jos haluat artikkelisisältöä hakusanalla.
+/tv *hakusana*, jos etsit videosisältöä hakusanalla.
+/radio *hakusana*, jos etsit radiosisältöä hakusanalla.
+/fakta antaa kiinnostavan historiallisen faktan. """)
 
 # Hakee tietokannasta artikkeleita hakusanan perusteella
 def search(update, context, language, word, position):
@@ -105,7 +106,7 @@ def search(update, context, language, word, position):
 
  # Kehoittaa käuyyäjää syöttämään haulle hakusanan
     except KeyError:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Käytä hakusanaa, esimerkiksi '/hae_artikkeli koira'")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Käytä hakusanaa, esimerkiksi '/artikkeli koira'")
     except IndexError:
         context.bot.send_message(chat_id=update.effective_chat.id, text="Olet ehtinyt lukea kaikki artikkelini tästä aiheesta, kokeile hakea jollain toisella hakusanalla!")
 
@@ -136,7 +137,7 @@ def search_tv(update, context):
                     chat_id=update.effective_chat.id, text=results[i])
             
         else:
-            context.bot.send_message(chat_id=update.effective_chat.id,text="Ei hakusanaa! Käytä komentoa /hae_tv *hakusana*")
+            context.bot.send_message(chat_id=update.effective_chat.id,text="Ei hakusanaa! Käytä komentoa /tv *hakusana*")
     except IndexError:
         context.bot.send_message(chat_id=update.effective_chat.id, text="En löytänyt enempää kuin nämä, kokeile toista hakusanaa!")
 
@@ -146,7 +147,7 @@ def search_radio(update, context):
 
     if not context.args:
         context.bot.send_message(chat_id=update.effective_chat.id,
-                                 text="Ei hakusanaa! Käytä komentoa /hae_radio *hakusana*")
+                                 text="Ei hakusanaa! Käytä komentoa /radio *hakusana*")
     else:
         global_user_list[update.effective_chat.id] = context.args[0]
         results = get_media(' '.join(context.args), 'radioprogram')
@@ -374,49 +375,44 @@ def sok(update, context):
 
 # Komento tuntemattomalle komentosyötteelle
 def unknown(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="Sorry, I didn't understand that command.")
+    context.bot.send_message(chat_id=update.effective_chat.id,text="Anteeksi, en ymmärrä mitä tarkoitat.")
 
+# handlers 
 
-    """ def language(update: Update, context: CallbackContext) -> None:
-
-    keyboard = [
-        [
-            InlineKeyboardButton("Suomi", callback_data='l1'),
-            InlineKeyboardButton("Svenska", callback_data='l2'),
-        ]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    update.message.reply_text('Millä kielellä haluat lukea artikkeleita?', reply_markup=reply_markup) """
-
-
-# handlers
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
 
-search_radio_handler = CommandHandler("hae_radio", search_radio)
-dispatcher.add_handler(search_radio_handler)
+help_handler = CommandHandler('help', help)
+dispatcher.add_handler(help_handler)
 
-# updater.dispatcher.add_handler(CommandHandler('language', language))
+category_handler = CommandHandler('hae', category)
+dispatcher.add_handler(category_handler)
 
-apua_handler = CommandHandler('apua', apua)
-dispatcher.add_handler(apua_handler)
+search_handler = CommandHandler('search', search)
+dispatcher.add_handler(search_handler)
 
-updater.dispatcher.add_handler(
-    CallbackQueryHandler(handle_show_more, pattern='s'))
-
-hae_handler = CommandHandler('hae_artikkeli', hae_artikkeli)
+hae_handler = CommandHandler('artikkeli', hae_artikkeli)
 dispatcher.add_handler(hae_handler)
 
 sok_handler = CommandHandler('sok', sok)
 dispatcher.add_handler(sok_handler)
 
-search_tv_handler = CommandHandler("hae_tv", search_tv)
+search_tv_handler = CommandHandler("tv", search_tv)
 dispatcher.add_handler(search_tv_handler)
 
-category_handler = CommandHandler('hae', category)
-dispatcher.add_handler(category_handler)
+search_radio_handler = CommandHandler("radio", search_radio)
+dispatcher.add_handler(search_radio_handler)
+
+daily_fact_handler = CommandHandler("fakta", daily_fact)
+dispatcher.add_handler(daily_fact_handler)
+
+#Tuntemattoman komennon handler
+unknown_handler = MessageHandler(Filters.command, unknown)
+dispatcher.add_handler(unknown_handler)
+
+
+updater.dispatcher.add_handler(
+    CallbackQueryHandler(handle_show_more, pattern='s'))
 
 updater.dispatcher.add_handler(
     CallbackQueryHandler(handle_category, pattern='c'))
@@ -432,16 +428,6 @@ updater.dispatcher.add_handler(
 
 updater.dispatcher.add_handler(
     CallbackQueryHandler(handle_tv_tag, pattern='t'))
-
-search_handler = CommandHandler('search', search)
-dispatcher.add_handler(search_handler)
-
-daily_fact_handler = CommandHandler("paivan_fakta", daily_fact)
-dispatcher.add_handler(daily_fact_handler)
-
-unknown_handler = MessageHandler(Filters.command, unknown)
-dispatcher.add_handler(unknown_handler)
-
 
 if __name__ == "__main__":
     main()
