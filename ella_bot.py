@@ -127,16 +127,16 @@ def search_tv(update, context):
     try:
         global global_user_list
 
-        if not context.args:
-            context.bot.send_message(chat_id=update.effective_chat.id,
-                                    text="Ei hakusanaa! Käytä komentoa /hae_tv *hakusana*")
-        else:
+        if context.args[0]:
             global_user_list[update.effective_chat.id][0] = context.args[0]
             results = get_media(' '.join(context.args), 'tvprogram')
             i = 0
             for i in range(i, i+5):
                 context.bot.send_message(
                     chat_id=update.effective_chat.id, text=results[i])
+            
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id,text="Ei hakusanaa! Käytä komentoa /hae_tv *hakusana*")
     except IndexError:
         context.bot.send_message(chat_id=update.effective_chat.id, text="En löytänyt enempää kuin nämä, kokeile toista hakusanaa!")
 
