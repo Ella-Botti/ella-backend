@@ -375,7 +375,12 @@ def sok(update, context):
 
 # Komento tuntemattomalle komentosyötteelle
 def unknown(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id,text="Anteeksi, en ymmärrä mitä tarkoitat.")
+    context.bot.send_message(chat_id=update.effective_chat.id,text="Anteeksi, en ymmärrä mitä tarkoitat. Kokeile esimerkiksi /hae.")
+
+
+def unknown_message(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Anteeksi, en ymmärrä mitä tarkoitat.")
+
 
 # handlers 
 
@@ -409,6 +414,9 @@ dispatcher.add_handler(daily_fact_handler)
 #Tuntemattoman komennon handler
 unknown_handler = MessageHandler(Filters.command, unknown)
 dispatcher.add_handler(unknown_handler)
+
+echo_handler = MessageHandler(Filters.text & (~Filters.command), unknown_message)
+dispatcher.add_handler(echo_handler)
 
 
 updater.dispatcher.add_handler(
