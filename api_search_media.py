@@ -24,7 +24,7 @@ def get_media(keyword, type) :
 
     #luodaan media-olio ja lisätään listaan
     for item in media['data']:
-        media_item = f'{item["title"]["fi"]} - http://areena.yle.fi/{item["id"]}'   
+        media_item = f'{item["title"]} - http://areena.yle.fi/{item["id"]}'   
         filtered_list.append(media_item)
 
     return filtered_list
