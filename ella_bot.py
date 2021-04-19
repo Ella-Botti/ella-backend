@@ -230,19 +230,15 @@ def handle_category(update, context):
 def articles_tag(update, context):
     keyboard = [
         [
-            InlineKeyboardButton("Kotimaa", callback_data='a1'),
-            InlineKeyboardButton("Ulkomaat", callback_data='a2'),
-            InlineKeyboardButton("Politiikka", callback_data='a3'),
-            InlineKeyboardButton("Urheilu", callback_data='a4'),
-            InlineKeyboardButton("Talous", callback_data='a5'),
-            InlineKeyboardButton("Tiede", callback_data='a6'),
-            InlineKeyboardButton("Kulttuuri", callback_data='a7'),
-
+            InlineKeyboardButton("Politiikka", callback_data='a1'),
+            InlineKeyboardButton("Urheilu", callback_data='a2'),
+            InlineKeyboardButton("Kulttuuri", callback_data='a3'),
+            InlineKeyboardButton("Viihde", callback_data='a4'),
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     context.bot.send_message(chat_id=update.effective_chat.id,
-                             text='Mitä uutisia haluat lukea?', reply_markup=reply_markup)
+                             text='Mitä artikkeleita haluat lukea?', reply_markup=reply_markup)
 
 
 # Kuuntelee articles_tag ja tekee valinnan mukaisen haun
@@ -250,26 +246,17 @@ def handle_articles_tag(update, context):
     query = update.callback_query
 
     if query.data == 'a1':
-        query.edit_message_text(text='Etsitään kotimaan uutisia...')
-        tag_search_articles(update, context, 'kotimaa')
-    elif query.data == 'a2':
-        query.edit_message_text(text='Etsitään ulkomaiden uutisia...')
-        tag_search_articles(update, context, 'ulkomaat')
-    elif query.data == 'a3':
-        query.edit_message_text(text='Etsitään politiikan uutisia...')
+        query.edit_message_text(text='Etsitään politiikan artikkeleita...')
         tag_search_articles(update, context, 'politiikka')
-    elif query.data == 'a4':
-        query.edit_message_text(text='Etsitään urheilu uutisia...')
+    elif query.data == 'a2':
+        query.edit_message_text(text='Etsitään urheilu artikkeleita...')
         tag_search_articles(update, context, 'urheilu')
-    elif query.data == 'a5':
-        query.edit_message_text(text='Etsitään talous uutisia...')
-        tag_search_articles(update, context, 'talous')
-    elif query.data == 'a6':
-        query.edit_message_text(text='Etsitään tiede uutisia...')
-        tag_search_articles(update, context, 'tiede')
-    elif query.data == 'a7':
-        query.edit_message_text(text='Etsitään kulttuuri uutisia...')
+    elif query.data == 'a3':
+        query.edit_message_text(text='Etsitään kulttuuri artikkeleita...')
         tag_search_articles(update, context, 'kulttuuri')
+    elif query.data == 'a4':
+        query.edit_message_text(text='Etsitään kulttuuri artikkeleita...')
+        tag_search_articles(update, context, 'viihde')
 
 
 # Antaa mediavaihtoehdot tägeinä
@@ -302,8 +289,8 @@ def radio_tag(update, context):
     keyboard = [
         [
             InlineKeyboardButton("Musiikki", callback_data='r1'),
-            InlineKeyboardButton("Klassinen musiikki", callback_data='r2'),
-            InlineKeyboardButton("Ajankohtaisohjelmat", callback_data='r3'),
+            InlineKeyboardButton("Kuunnelmat", callback_data='r2'),
+            InlineKeyboardButton("Uutiset", callback_data='r3'),
 
         ]
     ]
@@ -317,31 +304,59 @@ def handle_radio_tag(update, context):
     query = update.callback_query
 
     if query.data == 'r1':
-        tag_search_media(update, context, 'radioprogram', '5-143')
+        music_tag(update, context)
         query.edit_message_text(text='Etsitään musiikkia...')
     elif query.data == 'r2':
-        tag_search_media(update, context, 'radioprogram', '5-146')
-        query.edit_message_text(text='Etsitään klassista musiikkia...')
+        tag_search_media(update, context, 'radioprogram', '5-215')
+        query.edit_message_text(text='Etsitään kuunnelmia...')
     elif query.data == 'r3':
-        tag_search_media(update, context, 'radioprogram', '5-151')
-        query.edit_message_text(text='Etsitään ajankohtaisohjelmia...')
+        tag_search_media(update, context, 'radioprogram', '5-226')
+        query.edit_message_text(text='Etsitään uutiset...')
+
+
+# Antaa musiikki vaihtojehtoja
+def music_tag(update, context):
+    keyboard = [
+        [
+            InlineKeyboardButton("Klassinen", callback_data='k1'),
+            InlineKeyboardButton("Pop ja rock", callback_data='k2'),
+            InlineKeyboardButton("Iskelmä", callback_data='k3'),
+
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    context.bot.send_message(chat_id=update.effective_chat.id,
+                             text='Etsitkö musiikkia, podcasteja vai ajankohtaisohjelmia?', reply_markup=reply_markup)
+
+
+# Kuuntelee radio_tag komentoa ja tekee valinnan mukaisen haun
+def handle_music_tag(update, context):
+    query = update.callback_query
+
+    if query.data == 'k1':
+        tag_search_media(update, context, 'radioprogram', '5-209')
+        query.edit_message_text(text='Etsitään klassista...')
+    elif query.data == 'k2':
+        tag_search_media(update, context, 'radioprogram', '5-205')
+        query.edit_message_text(text='Etsitään popmusiikkia...')
+    elif query.data == 'k3':
+        tag_search_media(update, context, 'radioprogram', '5-207')
+        query.edit_message_text(text='Etsitään iskelmää...')
 
 
 # Antaa tv vaihtoehtoja
 def tv_tag(update, context):
     keyboard = [
         [
-            InlineKeyboardButton("Kotimaiset sarjat", callback_data='t1'),
-            InlineKeyboardButton("Ulkomaiset sarjat", callback_data='t2'),
-            InlineKeyboardButton("Elokuvat", callback_data='t3'),
-            InlineKeyboardButton("Dokumentit", callback_data='t4'),
-            InlineKeyboardButton("Urheilu", callback_data='t5')
+            InlineKeyboardButton("Sarjat", callback_data='t1'),
+            InlineKeyboardButton("Elokuvat", callback_data='t2'),
+            InlineKeyboardButton("Urheilu", callback_data='t3')
 
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     context.bot.send_message(chat_id=update.effective_chat.id,
-                             text='Etsitkö sarjoja, elokuvia, dokumentteja vai urheilua?', reply_markup=reply_markup)
+                             text='Etsitkö sarjoja, elokuvia vai urheilua?', reply_markup=reply_markup)
 
 
 # Kuuntelee tv_tag komentoa ja tekee valinnan mukaisen haun
@@ -349,20 +364,71 @@ def handle_tv_tag(update, context):
     query = update.callback_query
 
     if query.data == 't1':
-        tag_search_media(update, context, 'tvprogram', '5-133')
-        query.edit_message_text(text='Etsitään kotimaisia sarjoja...')
+        series_tag(update, context)
+        query.edit_message_text(text='Etsitään sarjoja...')    
     elif query.data == 't2':
-        tag_search_media(update, context, 'tvprogram', '5-134')
-        query.edit_message_text(text='Etsitään ulkomaisia sarjoja...')
-    elif query.data == 't3':
-        tag_search_media(update, context, 'tvprogram', '5-135')
+        movie_tag(update, context)
         query.edit_message_text(text='Etsitään elokuvia...')
-    elif query.data == 't4':
-        tag_search_media(update, context, 'tvprogram', '5-148')
-        query.edit_message_text(text='Etsitään dokumentteja...')
-    elif query.data == 't5':
+    elif query.data == 't3':
         tag_search_media(update, context, 'tvprogram', '5-164')
         query.edit_message_text(text='Etsitään urheilua...')
+
+# Antaa sarja vaihtoehtoja
+def series_tag(update, context):
+    keyboard = [
+        [
+            InlineKeyboardButton("Kotimaiset sarjat", callback_data='b1'),
+            InlineKeyboardButton("Ulkomaiset sarjat", callback_data='b2')
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    context.bot.send_message(chat_id=update.effective_chat.id,
+                             text='Etsitkö kotimaisia vai ulkomaisia sarjoja?', reply_markup=reply_markup)
+
+
+# Kuuntelee series_tag komentoa ja tekee valinnan mukaisen haun api-rajapintaan
+def handle_series_tag(update, context):
+    query = update.callback_query
+
+    if query.data == 'b1': 
+        tag_search_media(update, context, 'tvprogram', '5-133')
+        query.edit_message_text(text='Etsitään kotimaisia sarjoja...')
+    elif  query.data == 'b2':
+        tag_search_media(update, context, 'tvprogram', '5-134')
+        query.edit_message_text(text='Etsitään ulkomaisia sarjoja...')
+
+
+# Antaa elokuva vaihtoehtoja
+def movie_tag(update, context):
+    keyboard = [
+        [
+            InlineKeyboardButton("Historia", callback_data='f1'),
+            InlineKeyboardButton("Jännitys", callback_data='f2'),
+            InlineKeyboardButton("Dokumentit", callback_data='f3'),
+            InlineKeyboardButton("Komedia", callback_data='f4')
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    context.bot.send_message(chat_id=update.effective_chat.id,
+                             text='Mitä elokuvia etsit?', reply_markup=reply_markup)
+
+
+# Kuuntelee movie_tag komentoa ja tekee valinnan mukaisen haun api-rajapintaan
+def handle_movie_tag(update, context):
+    query = update.callback_query
+
+    if query.data == 'f1':
+        tag_search_media(update, context, 'tvprogram', '5-157')
+        query.edit_message_text(text='Etsitään tuloksia: historia')
+    elif query.data == 'f2':
+        tag_search_media(update, context, 'tvprogram', '5-137')
+        query.edit_message_text(text='Etsitään tuloksia: jännitys')
+    elif query.data == 'f3':
+        tag_search_media(update, context, 'tvprogram', '5-148')
+        query.edit_message_text(text='Etsitään tuloksia: dokumentti')
+    elif query.data == 'f4':
+        tag_search_media(update, context, 'tvprogram', '5-136')
+        query.edit_message_text(text='Etsitään tuloksia: komedia')
     
 
 # Komento artikkelin haulle hakusanalla
@@ -438,6 +504,16 @@ updater.dispatcher.add_handler(
 
 updater.dispatcher.add_handler(
     CallbackQueryHandler(handle_tv_tag, pattern='t'))
+
+updater.dispatcher.add_handler(
+    CallbackQueryHandler(handle_series_tag, pattern='b'))
+
+updater.dispatcher.add_handler(
+    CallbackQueryHandler(handle_movie_tag, pattern='f'))
+
+updater.dispatcher.add_handler(
+    CallbackQueryHandler(handle_music_tag, pattern='k'))
+
 
 if __name__ == "__main__":
     main()
