@@ -1,6 +1,7 @@
 from datetime import date
 import psycopg2
-from random import randint
+from random import randint, choice
+from replies import *
 
 
 def search_fact():
@@ -9,12 +10,6 @@ def search_fact():
     cur = conn.cursor()
 
     print("connection succesful")
-
-    # avataan vastausvaihtoehdot
-
-    content = ["Kävin läpi kenkälaatikkoani ja löysin tämän faktan...", "Pyyhkiessäni pölyjä komerossa tämä tippui päähäni...", "Sohvalla makoillessani tämä juolahti mieleeni...",
-               "Vietettyäni vuoden neljän seinän sisällä, muistelin tätä useasti...", "Vaaribot muisteli tätä eilen keinutuolissa...", "Tätä saattaa joskus tarvita tietovisassa...", "TRIVIA TIME!", "Tämä hiiren nakertama fakta löytyi mökiltä..."]
-    reply_number = randint(0, (len(content) - 1))
 
     # ajetaan tietokantakomento cursori.execute() metodilla.
 
@@ -32,6 +27,6 @@ def search_fact():
     filtered_events = []
 
     for item in events:
-        event = f"{content[reply_number]} Tänään {item[0]}.{item[1]}, vuonna {item[2]} {item[3]}."
+        event = f"{fact_replies[randint(0, (len(fact_replies) - 1))]} Tänään {item[0]}.{item[1]}, vuonna {item[2]} {item[3]}."
         filtered_events.append(event)
     return filtered_events
