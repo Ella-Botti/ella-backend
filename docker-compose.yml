@@ -1,0 +1,19 @@
+version: '3.5'
+
+services: 
+    ella:
+        build: ./
+        container_name: ella
+    postgres:
+        image: postgres:13.2-alpine
+        container_name: postgres
+        restart: always
+        volumes:
+            - ./:/usr/src/app
+        environment:
+            - POSTGRES_USER=root
+            - POSTGRES_DB=root
+            - POSTGRES_HOST_AUTH_METHOD=trust
+        ports:
+            - 5432:5432
+#After docker-compose up, run this command in the root folder, with the containers running: docker container exec -i $(docker-compose ps -q postgres) psql root < assa.sql

@@ -7,7 +7,7 @@ import psycopg2
 
 def search_keyword(queryString, language):
 
-    conn = psycopg2.connect("dbname=assa user=assa")
+    conn = psycopg2.connect("host=postgres port=5432 dbname=root user=root")
 
     cur = conn.cursor()
 

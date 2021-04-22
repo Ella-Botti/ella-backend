@@ -5,7 +5,7 @@ from replies import *
 
 
 def search_fact():
-    conn = psycopg2.connect("dbname=assa user=assa")
+    conn = psycopg2.connect("host=postgres port=5432 dbname=root user=root")
 
     cur = conn.cursor()
 
@@ -27,6 +27,6 @@ def search_fact():
     filtered_events = []
 
     for item in events:
-        event = f"{fact_replies[randint(0, (len(fact_replies) - 1))]} Tänään {item[0]}.{item[1]}, vuonna {item[2]} {item[3]}."
+        event = f"{fact_replies[randint(0, (len(fact_replies) - 1))]} \nTänään {item[0]}.{item[1]}, vuonna {item[2]} {item[3]}."
         filtered_events.append(event)
     return filtered_events

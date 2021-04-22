@@ -5,7 +5,7 @@ import psycopg2
 
 def search_tag(queryTag):
 
-    conn = psycopg2.connect("dbname=assa user=mikko")
+    conn = psycopg2.connect("host=postgres port=5432 dbname=root user=root")
 
     cur = conn.cursor()
 
