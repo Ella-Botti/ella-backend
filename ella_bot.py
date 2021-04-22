@@ -66,9 +66,8 @@ Ella botilla voit hakea sisälöä eri tavoilla:
 /radio *hakusana*, jos etsit radiosisältöä hakusanalla.
 /fakta antaa kiinnostavan historiallisen faktan. """)
 
+
 # Hakee tietokannasta artikkeleita hakusanan perusteella
-
-
 def search(update, context, language, word, position):
     try:
         global global_user_list
@@ -108,7 +107,7 @@ def search(update, context, language, word, position):
                     context.bot.send_message(
                         chat_id=update.effective_chat.id, text=results[i])
                     global_user_list[update.effective_chat.id][2] = i+1
-                show_more(update, context, i)
+                show_more(update, context, 's1')
             print(update.effective_chat.id)
 
  # Kehoittaa käuyyäjää syöttämään haulle hakusanan
@@ -118,6 +117,33 @@ def search(update, context, language, word, position):
     except IndexError:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text=no_more_results[randint(0, (len(no_more_results) - 1))])
+
+
+# Antaa käyttäjälle napin jolla voi pyytää lisää hakutuloksia
+def show_more(update: Update, context: CallbackContext, mode):
+    keyboard = [
+        [
+            InlineKeyboardButton("Näytä lisää", callback_data=mode)
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    context.bot.send_message(chat_id=update.effective_chat.id,
+                             text="Näytä lisää tuloksia ", reply_markup=reply_markup)
+
+
+# Kuuntelee show_more nappia ja kutsuu hakua
+def handle_show_more(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    word = global_user_list[update.effective_chat.id][0]
+ 
+    if query.data == 's1':
+        search(update, context, global_user_list[update.effective_chat.id]
+               [1], "", global_user_list[update.effective_chat.id][2])
+    elif query.data == 's2':
+        search_tv(update, context, global_user_list[update.effective_chat.id][0], global_user_list[update.effective_chat.id][2])
+    elif query.data == 's3':
+        search_radio(update, context, global_user_list[update.effective_chat.id][0], global_user_list[update.effective_chat.id][2])
 
 
 # Hakee artikkeleita tägien perusteella tietokannasta
@@ -134,41 +160,68 @@ def tag_search_articles(update, context, tag):
 
 
 # Hakee tv sisältöä api rajapinnasta hakusanan perusteella
-def search_tv(update, context):
+def search_tv(update, context, word, position):
     try:
         global global_user_list
 
-        if context.args[0]:
-            global_user_list[update.effective_chat.id] = context.args[0]
-            results = get_media(' '.join(context.args), 'tvprogram')
-            i = 0
+        if word:
+            global_user_list[update.effective_chat.id] = [word, '', position]
+
+        elif context.args[0]:
+            global_user_list[update.effective_chat.id] = [context.args[0], '', position]
+        
+        results = get_media(global_user_list[update.effective_chat.id][0], 'tvprogram')
+        
+        if len(results) == 0:
+            context.bot.send_message(chat_id=update.effective_chat.id, text=no_results[randint(0, (len(no_results) - 1))])
+        
+        else:         
+            i = position
+        
             for i in range(i, i+5):
                 context.bot.send_message(
                     chat_id=update.effective_chat.id, text=results[i])
+                global_user_list[update.effective_chat.id][2] = i+1
+            show_more(update, context, 's2')
 
-        else:
-            context.bot.send_message(
-                chat_id=update.effective_chat.id, text=no_search_word[randint(0, (len(no_search_word) - 1))])
+    except KeyError:
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text=no_search_word[randint(0, (len(no_search_word) - 1))])
     except IndexError:
         context.bot.send_message(chat_id=update.effective_chat.id,
-                                 text=no_search_word[randint(0, (len(no_search_word) - 1))])
+                                 text=no_more_results[randint(0, (len(no_more_results) - 1))])
+
 
 # Hakee radio sisältöä api rajapinnasta hakusanan perusteella
+def search_radio(update, context, word, position):
+    try:
+        global global_user_list
 
+        if word:
+            global_user_list[update.effective_chat.id] = [word, '', position]
 
-def search_radio(update, context):
-    global global_user_list
+        elif context.args[0]:
+            global_user_list[update.effective_chat.id] = [context.args[0], '', position]
+        
+        results = get_media(global_user_list[update.effective_chat.id][0], 'radioprogram')
+        
+        if len(results) == 0:
+            context.bot.send_message(chat_id=update.effective_chat.id, text=no_results[randint(0, (len(no_results) - 1))])
+        
+        else:         
+            i = position
+            for i in range(i, i+5):
+                context.bot.send_message(
+                    chat_id=update.effective_chat.id, text=results[i])
+                global_user_list[update.effective_chat.id][2] = i+1
+            show_more(update, context, 's3')
 
-    if not context.args:
+    except KeyError:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text=no_search_word[randint(0, (len(no_search_word) - 1))])
-    else:
-        global_user_list[update.effective_chat.id] = context.args[0]
-        results = get_media(' '.join(context.args), 'radioprogram')
-        i = 0
-        for i in range(i, i+5):
-            context.bot.send_message(
-                chat_id=update.effective_chat.id, text=results[i])
+    except IndexError:
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text=no_more_results[randint(0, (len(no_more_results) - 1))])
 
 
 # Hakee mediaa api rajapinnasta tagin (tyyppi ja kategoria) perusteella
@@ -182,37 +235,6 @@ def tag_search_media(update, context, type, category):
     except IndexError:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text=no_more_results[randint(0, (len(no_more_results) - 1))])
-
-
-# Antaa käyttäjälle napin jolla voi pyytää lisää hakutuloksia
-def show_more(update: Update, context: CallbackContext, position):
-    keyboard = [
-        [
-            InlineKeyboardButton("Näytä lisää", callback_data='s1')
-        ]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="Näytä lisää tuloksia ", reply_markup=reply_markup)
-
-
-# Kuuntelee show_more nappia ja kutsuu hakua
-def handle_show_more(update: Update, context: CallbackContext) -> None:
-    query = update.callback_query
-    word = global_user_list[update.effective_chat.id][0]
-    print(word)
-
-    if query.data == 's1':
-        search(update, context, global_user_list[update.effective_chat.id]
-               [1], "", global_user_list[update.effective_chat.id][2])
-
-
-# Päivän_fakta -komento
-def daily_fact(update, context):
-    lista = search_fact()
-    context.bot.send_message(
-        chat_id=update.effective_chat.id, text=choice(lista))
 
 
 # Antaa kategoriavaihtoehdot /hae -komennolle
@@ -387,9 +409,8 @@ def handle_tv_tag(update, context):
         tag_search_media(update, context, 'tvprogram', '5-164')
         query.edit_message_text(text='Etsitään urheilua...')
 
+
 # Antaa sarja vaihtoehtoja
-
-
 def series_tag(update, context):
     keyboard = [
         [
@@ -447,21 +468,33 @@ def handle_movie_tag(update, context):
         query.edit_message_text(text='Etsitään tuloksia: komedia')
 
 
+# Päivän_fakta -komento
+def daily_fact(update, context):
+    lista = search_fact()
+    context.bot.send_message(
+        chat_id=update.effective_chat.id, text=choice(lista))
+
+
 # Komento artikkelin haulle hakusanalla
 def hae_artikkeli(update, context):
     search(update, context, "fi", '', 0)
-
 
 # Komento artikkelin haulle ruotsiksi
 def sok(update, context):
     search(update, context, "sv", '', 0)
 
+# Komento tv haulle hakusanalla
+def hae_tv(update, context):
+    search_tv(update, context, '', 0)
+
+# Komento radion haulle hakusanalla
+def hae_radio(update, context):
+    search_radio(update, context, '', 0)
 
 # Komento tuntemattomalle komentosyötteelle
 def unknown(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id,
                              text=unknown_command[randint(0, (len(unknown_command) - 1))])
-
 
 def unknown_message(update, context):
     context.bot.send_message(
@@ -488,11 +521,11 @@ dispatcher.add_handler(hae_handler)
 sok_handler = CommandHandler('sok', sok)
 dispatcher.add_handler(sok_handler)
 
-search_tv_handler = CommandHandler("tv", search_tv)
-dispatcher.add_handler(search_tv_handler)
+hae_tv_handler = CommandHandler("tv", hae_tv)
+dispatcher.add_handler(hae_tv_handler)
 
-search_radio_handler = CommandHandler("radio", search_radio)
-dispatcher.add_handler(search_radio_handler)
+hae_radio_handler = CommandHandler("radio", hae_radio)
+dispatcher.add_handler(hae_radio_handler)
 
 daily_fact_handler = CommandHandler("fakta", daily_fact)
 dispatcher.add_handler(daily_fact_handler)
