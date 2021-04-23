@@ -10,6 +10,7 @@ from fact_of_the_day import search_fact
 from tag_search import search_tag
 from api_search_media import get_media, get_tag
 from replies import *
+import time
 
 dotenv_path = Path('./.env')
 load_dotenv(dotenv_path=dotenv_path)
@@ -54,6 +55,23 @@ Aloita kokeilemalla /fakta komentoa.
 Till exempel med \"/sok hund\" får du hundartiklar.
 Tyvärr fungerar bara artikelsökningen just nu på svenska.
 """)
+
+    notifikaatio_lista = search_fact()
+
+    #Constantly checks time and if 12:00:00 sends user a daily fact message
+    while True:
+        localtime = time.localtime()
+        seconds_str = time.strftime("%S", localtime)
+        minutes_str = time.strftime("%M", localtime)
+        hours_str = time.strftime("%H", localtime)
+        seconds_int = int(seconds_str)
+        minutes_int = int(minutes_str)
+        hours_int = int(hours_str)
+
+        if seconds_int == 0 and minutes_int == 0 and hours_int == 12:
+            context.bot.send_message(chat_id=update.effective_chat.id, text=choice(notifikaatio_lista))
+            time.sleep(2)
+
 
 
 def help(update, context):
