@@ -58,7 +58,7 @@ Tyvärr fungerar bara artikelsökningen just nu på svenska.
 
     notifikaatio_lista = search_fact()
 
-    #Constantly checks time and if 12:00:00 sends user a daily fact message
+    # Tarkistaa onko kello 12.00, jos on, lähettää päivän faktan
     while True:
         localtime = time.localtime()
         seconds_str = time.strftime("%S", localtime)
@@ -147,14 +147,12 @@ def show_more(update: Update, context: CallbackContext, mode):
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="Näytä lisää tuloksia ", reply_markup=reply_markup)
+                             text="Haluatko lisää tuloksia?", reply_markup=reply_markup)
 
 
 # Kuuntelee show_more nappia ja kutsuu hakua
 def handle_show_more(update: Update, context: CallbackContext) -> None:
-    query = update.callback_query
-    word = global_user_list[update.effective_chat.id][0]
- 
+    query = update.callback_query 
     if query.data == 's1':
         search(update, context, global_user_list[update.effective_chat.id]
                [1], "", global_user_list[update.effective_chat.id][2])
@@ -162,19 +160,59 @@ def handle_show_more(update: Update, context: CallbackContext) -> None:
         search_tv(update, context, global_user_list[update.effective_chat.id][0], global_user_list[update.effective_chat.id][2])
     elif query.data == 's3':
         search_radio(update, context, global_user_list[update.effective_chat.id][0], global_user_list[update.effective_chat.id][2])
+    elif query.data == 's4':
+        tag_search_articles(update, context, global_user_list[update.effective_chat.id][0], global_user_list[update.effective_chat.id][2])
+    elif query.data == 's5':
+        tag_search_media(update, context, global_user_list[update.effective_chat.id][3], global_user_list[update.effective_chat.id][0], global_user_list[update.effective_chat.id][2])
 
 
 # Hakee artikkeleita tägien perusteella tietokannasta
-def tag_search_articles(update, context, tag):
+def tag_search_articles(update, context, tag, position):
     try:
+        global global_user_list
+        global_user_list[update.effective_chat.id] = [tag, '', position]
         results = search_tag(tag)
-        i = 0
-        for i in range(i, i+5):
-            context.bot.send_message(
-                chat_id=update.effective_chat.id, text=results[i])
+        if len(results) == 0:
+            context.bot.send_message(chat_id=update.effective_chat.id, text=no_results[randint(0, (len(no_results) - 1))])
+        elif len(results) > 0:
+            i = position
+            for i in range(i, i+5):
+                context.bot.send_message(chat_id=update.effective_chat.id, text=results[i])
+                global_user_list[update.effective_chat.id][2] = i+1
+            show_more(update, context, "s4")
+
+    # Jos tulokset loppuvat, botti antaa replies.py:stä vastauksen
+    except IndexError:
+        context.bot.send_message(chat_id=update.effective_chat.id,text=no_more_results[randint(0, (len(no_more_results) - 1))])
+
+    # Jos käyttäjä ei tarjoa hakusanaa, botti antaa replies.py:stä vastauksen
+    except KeyError:
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text=no_search_word[randint(0, (len(no_search_word) - 1))])
+
+
+# Hakee mediaa api rajapinnasta tagin (tyyppi ja kategoria) perusteella
+def tag_search_media(update, context, type, category, position):
+    try:
+        global global_user_list
+        global_user_list[update.effective_chat.id] = [category, '', position, type]
+        results = get_tag(type, category)
+        if len(results) == 0:
+            context.bot.send_message(chat_id=update.effective_chat.id, text=no_results[randint(0, (len(no_results) - 1))])
+        elif len(results) > 0:
+            i = position
+            for i in range(i, i+5):
+                context.bot.send_message(chat_id=update.effective_chat.id, text=results[i])
+                global_user_list[update.effective_chat.id][2] = i+1
+            show_more(update, context, "s5")
+
     except IndexError:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text=no_more_results[randint(0, (len(no_more_results) - 1))])
+
+    except KeyError:
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text=no_search_word[randint(0, (len(no_search_word) - 1))])
 
 
 # Hakee tv sisältöä api rajapinnasta hakusanan perusteella
@@ -202,6 +240,7 @@ def search_tv(update, context, word, position):
                 global_user_list[update.effective_chat.id][2] = i+1
             show_more(update, context, 's2')
 
+    
     except KeyError:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text=no_search_word[randint(0, (len(no_search_word) - 1))])
@@ -237,19 +276,6 @@ def search_radio(update, context, word, position):
     except KeyError:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text=no_search_word[randint(0, (len(no_search_word) - 1))])
-    except IndexError:
-        context.bot.send_message(chat_id=update.effective_chat.id,
-                                 text=no_more_results[randint(0, (len(no_more_results) - 1))])
-
-
-# Hakee mediaa api rajapinnasta tagin (tyyppi ja kategoria) perusteella
-def tag_search_media(update, context, type, category):
-    try:
-        results = get_tag(type, category)
-        i = 0
-        for i in range(i, i+5):
-            context.bot.send_message(
-                chat_id=update.effective_chat.id, text=results[i])
     except IndexError:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text=no_more_results[randint(0, (len(no_more_results) - 1))])
@@ -301,16 +327,16 @@ def handle_articles_tag(update, context):
 
     if query.data == 'a1':
         query.edit_message_text(text='Etsitään politiikan artikkeleita...')
-        tag_search_articles(update, context, 'politiikka')
+        tag_search_articles(update, context, 'politiikka', 0)
     elif query.data == 'a2':
         query.edit_message_text(text='Etsitään urheilu artikkeleita...')
-        tag_search_articles(update, context, 'urheilu')
+        tag_search_articles(update, context, 'urheilu', 0)
     elif query.data == 'a3':
         query.edit_message_text(text='Etsitään kulttuuri artikkeleita...')
-        tag_search_articles(update, context, 'kulttuuri')
+        tag_search_articles(update, context, 'kulttuuri', 0)
     elif query.data == 'a4':
         query.edit_message_text(text='Etsitään kulttuuri artikkeleita...')
-        tag_search_articles(update, context, 'viihde')
+        tag_search_articles(update, context, 'viihde', 0)
 
 
 # Antaa mediavaihtoehdot tägeinä
@@ -361,10 +387,10 @@ def handle_radio_tag(update, context):
         music_tag(update, context)
         query.edit_message_text(text='Etsitään musiikkia...')
     elif query.data == 'r2':
-        tag_search_media(update, context, 'radioprogram', '5-215')
+        tag_search_media(update, context, 'radioprogram', '5-215', 0)
         query.edit_message_text(text='Etsitään kuunnelmia...')
     elif query.data == 'r3':
-        tag_search_media(update, context, 'radioprogram', '5-226')
+        tag_search_media(update, context, 'radioprogram', '5-226', 0)
         query.edit_message_text(text='Etsitään uutiset...')
 
 
@@ -388,13 +414,13 @@ def handle_music_tag(update, context):
     query = update.callback_query
 
     if query.data == 'k1':
-        tag_search_media(update, context, 'radioprogram', '5-209')
+        tag_search_media(update, context, 'radioprogram', '5-209',0)
         query.edit_message_text(text='Etsitään klassista...')
     elif query.data == 'k2':
-        tag_search_media(update, context, 'radioprogram', '5-205')
+        tag_search_media(update, context, 'radioprogram', '5-205', 0)
         query.edit_message_text(text='Etsitään popmusiikkia...')
     elif query.data == 'k3':
-        tag_search_media(update, context, 'radioprogram', '5-207')
+        tag_search_media(update, context, 'radioprogram', '5-207', 0)
         query.edit_message_text(text='Etsitään iskelmää...')
 
 
@@ -424,7 +450,7 @@ def handle_tv_tag(update, context):
         movie_tag(update, context)
         query.edit_message_text(text='Etsitään elokuvia...')
     elif query.data == 't3':
-        tag_search_media(update, context, 'tvprogram', '5-164')
+        tag_search_media(update, context, 'tvprogram', '5-164', 0)
         query.edit_message_text(text='Etsitään urheilua...')
 
 
@@ -446,10 +472,10 @@ def handle_series_tag(update, context):
     query = update.callback_query
 
     if query.data == 'b1':
-        tag_search_media(update, context, 'tvprogram', '5-133')
+        tag_search_media(update, context, 'tvprogram', '5-133', 0)
         query.edit_message_text(text='Etsitään kotimaisia sarjoja...')
     elif query.data == 'b2':
-        tag_search_media(update, context, 'tvprogram', '5-134')
+        tag_search_media(update, context, 'tvprogram', '5-134', 0)
         query.edit_message_text(text='Etsitään ulkomaisia sarjoja...')
 
 
@@ -473,16 +499,16 @@ def handle_movie_tag(update, context):
     query = update.callback_query
 
     if query.data == 'f1':
-        tag_search_media(update, context, 'tvprogram', '5-157')
+        tag_search_media(update, context, 'tvprogram', '5-157', 0)
         query.edit_message_text(text='Etsitään tuloksia: historia')
     elif query.data == 'f2':
-        tag_search_media(update, context, 'tvprogram', '5-137')
+        tag_search_media(update, context, 'tvprogram', '5-137', 0)
         query.edit_message_text(text='Etsitään tuloksia: jännitys')
     elif query.data == 'f3':
-        tag_search_media(update, context, 'tvprogram', '5-148')
+        tag_search_media(update, context, 'tvprogram', '5-148', 0)
         query.edit_message_text(text='Etsitään tuloksia: dokumentti')
     elif query.data == 'f4':
-        tag_search_media(update, context, 'tvprogram', '5-136')
+        tag_search_media(update, context, 'tvprogram', '5-136', 0)
         query.edit_message_text(text='Etsitään tuloksia: komedia')
 
 
