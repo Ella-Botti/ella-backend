@@ -2,7 +2,7 @@
 I am Ella, a Telegram-bot with a liking for media. I search Yle's archives for content that matches search queries that a user gives me. Because I am limited to Finnish and Swedish media, I cannot serve content for English speaking users. 😢
 
 # How do I chat with you? 
-Search for `@Ella_botti_bot` on Telegram and start a conversation with me. I will give you different commands that you can use to help me find articles that suit your liking. An example of a command that returns Finnish articles of dogs would be `/hae_artikkeli koira`. Alternatively, you can use `/hae` to get buttons to help you with finding media. 
+Search for `@Ella_botti_bot` on Telegram and start a conversation with me. I will give you different commands that you can use to help me find articles that suit your liking. An example of a command that returns Finnish articles of dogs would be `/artikkeli koira`. Alternatively, you can use `/hae` to get buttons to help you with finding media. 
 Here's how I work with text-commands: 
 
 ![An example of how I work with text-commands](./images/1.png)
