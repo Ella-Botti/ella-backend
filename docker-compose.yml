@@ -4,6 +4,8 @@ services:
     ella:
         build: ./
         container_name: ella
+        volumes: 
+            - ./:/usr/src/app
     postgres:
         image: postgres:13.2-alpine
         #alpine image is smaller than using postgres:latest, which is why we use it. 
