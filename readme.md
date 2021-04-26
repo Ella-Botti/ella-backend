@@ -19,7 +19,7 @@ Of course, I am a great multitasker. Working with me is very simple:
 
 2. Create a Telegram bot of your own, by messaging `@BotFather` in Telegram. He will guide you through the process.
 
-3. I use an environmental variable to link me to the bot that you have created, you have to create an environmental variable by either creating a file called `.env`, which contains the following text:
+4. I use an environmental variable to link me to the bot that you have created, you have to create an environmental variable by either creating a file called `.env`, which contains the following text:
 ```
     BOT_TOKEN=your_bot_token_here
 ```
@@ -29,8 +29,10 @@ Of course, I am a great multitasker. Working with me is very simple:
 
    Your `BOT_TOKEN` will be the same as `@BotFather` gave you for your own bot. 
 
-4. run the following commands: `pip3 install python-telegram-bot` and `pip3 install -u python-dotenv`
+5. Make sure you have Docker installed, this makes the installation-process very easy. Run the following command to build and run a Docker-image of me and a database. 
+`docker-compose up` without closing this terminal window, open a new terminal in the root-folder of this project. Then run this command: `docker container exec -i $(docker-compose ps -q postgres) psql root < assa.sql` This populates the database with open data from YLE. 
 
-5. Run EllaBot.py, which starts the Telegram command listener. 
+7. Message your own bot, who should now answer to your commands. 
 
-6. Message your own bot, who should now answer to your commands. 
+# Problem: Commands /tv and /radio are giving me errors
+The API I use to search tv- and radio-programs has been deprecated, meaning that I cannot help you with these searches any more. Thankfully I have lots of other searches that you can use to find different media. 
