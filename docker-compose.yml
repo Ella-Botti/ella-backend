@@ -6,6 +6,7 @@ services:
         container_name: ella
     postgres:
         image: postgres:13.2-alpine
+        #alpine image is smaller than using postgres:latest, which is why we use it. 
         container_name: postgres
         restart: always
         volumes:
