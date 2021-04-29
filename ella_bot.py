@@ -303,10 +303,10 @@ def handle_category(update, context):
 
     if query.data == 'c1':
         articles_tag(update, context)
-        query.edit_message_text(text='Etsitään artikkeleita...')
+
     elif query.data == 'c2':
         media_tag(update, context)
-        query.edit_message_text(text='Etsitään mediaa...')
+
 
 
 # Antaa artikkelivaihtoehdot tägeinä
@@ -329,16 +329,12 @@ def handle_articles_tag(update, context):
     query = update.callback_query
 
     if query.data == 'a1':
-        query.edit_message_text(text='Etsitään politiikan artikkeleita...')
         tag_search_articles(update, context, 'politiikka', 0)
     elif query.data == 'a2':
-        query.edit_message_text(text='Etsitään urheilu artikkeleita...')
         tag_search_articles(update, context, 'urheilu', 0)
     elif query.data == 'a3':
-        query.edit_message_text(text='Etsitään kulttuuri artikkeleita...')
         tag_search_articles(update, context, 'kulttuuri', 0)
     elif query.data == 'a4':
-        query.edit_message_text(text='Etsitään kulttuuri artikkeleita...')
         tag_search_articles(update, context, 'viihde', 0)
 
 
@@ -361,10 +357,8 @@ def handle_media_tag(update, context):
 
     if query.data == 'm1':
         radio_tag(update, context)
-        query.edit_message_text(text='Etsitään radio-ohjelmia...')
     elif query.data == 'm2':
         tv_tag(update, context)
-        query.edit_message_text(text='Etsitään tv-ohjelmia...')
 
 
 # Antaa radiovaihtoehdot
@@ -388,13 +382,10 @@ def handle_radio_tag(update, context):
 
     if query.data == 'r1':
         music_tag(update, context)
-        query.edit_message_text(text='Etsitään musiikkia...')
     elif query.data == 'r2':
         tag_search_media(update, context, 'radioprogram', '5-215', 0)
-        query.edit_message_text(text='Etsitään kuunnelmia...')
     elif query.data == 'r3':
         tag_search_media(update, context, 'radioprogram', '5-226', 0)
-        query.edit_message_text(text='Etsitään uutiset...')
 
 
 # Antaa musiikki vaihtojehtoja
@@ -418,13 +409,10 @@ def handle_music_tag(update, context):
 
     if query.data == 'k1':
         tag_search_media(update, context, 'radioprogram', '5-209',0)
-        query.edit_message_text(text='Etsitään klassista...')
     elif query.data == 'k2':
         tag_search_media(update, context, 'radioprogram', '5-205', 0)
-        query.edit_message_text(text='Etsitään popmusiikkia...')
     elif query.data == 'k3':
         tag_search_media(update, context, 'radioprogram', '5-207', 0)
-        query.edit_message_text(text='Etsitään iskelmää...')
 
 
 # Antaa tv vaihtoehtoja
@@ -448,13 +436,10 @@ def handle_tv_tag(update, context):
 
     if query.data == 't1':
         series_tag(update, context)
-        query.edit_message_text(text='Etsitään sarjoja...')
     elif query.data == 't2':
         movie_tag(update, context)
-        query.edit_message_text(text='Etsitään elokuvia...')
     elif query.data == 't3':
         tag_search_media(update, context, 'tvprogram', '5-164', 0)
-        query.edit_message_text(text='Etsitään urheilua...')
 
 
 # Antaa sarja vaihtoehtoja
@@ -476,10 +461,8 @@ def handle_series_tag(update, context):
 
     if query.data == 'b1':
         tag_search_media(update, context, 'tvprogram', '5-133', 0)
-        query.edit_message_text(text='Etsitään kotimaisia sarjoja...')
     elif query.data == 'b2':
         tag_search_media(update, context, 'tvprogram', '5-134', 0)
-        query.edit_message_text(text='Etsitään ulkomaisia sarjoja...')
 
 
 # Antaa elokuva vaihtoehtoja
@@ -503,16 +486,13 @@ def handle_movie_tag(update, context):
 
     if query.data == 'f1':
         tag_search_media(update, context, 'tvprogram', '5-157', 0)
-        query.edit_message_text(text='Etsitään tuloksia: historia')
     elif query.data == 'f2':
         tag_search_media(update, context, 'tvprogram', '5-137', 0)
-        query.edit_message_text(text='Etsitään tuloksia: jännitys')
     elif query.data == 'f3':
         tag_search_media(update, context, 'tvprogram', '5-148', 0)
-        query.edit_message_text(text='Etsitään tuloksia: dokumentti')
     elif query.data == 'f4':
         tag_search_media(update, context, 'tvprogram', '5-136', 0)
-        query.edit_message_text(text='Etsitään tuloksia: komedia')
+
 
 
 # Päivän_fakta -komento
