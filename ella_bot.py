@@ -146,8 +146,8 @@ def show_more(update: Update, context: CallbackContext, mode):
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="Haluatko lisää tuloksia?", reply_markup=reply_markup)
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Haluatko lisää tuloksia?", reply_markup=reply_markup)
+                             
 
 
 # Kuuntelee show_more nappia ja kutsuu hakua
@@ -179,6 +179,7 @@ def tag_search_articles(update, context, tag, position):
             for i in range(i, i+5):
                 context.bot.send_message(chat_id=update.effective_chat.id, text=results[i])
                 global_user_list[update.effective_chat.id][2] = i+1
+            context.bot.send_message(chat_id=update.effective_chat.id, text="Tee uusi haku /hae")
             show_more(update, context, "s4")
 
     # Jos tulokset loppuvat, botti antaa replies.py:stä vastauksen
@@ -204,7 +205,9 @@ def tag_search_media(update, context, type, category, position):
             for i in range(i, i+5):
                 context.bot.send_message(chat_id=update.effective_chat.id, text=results[i])
                 global_user_list[update.effective_chat.id][2] = i+1
+            context.bot.send_message(chat_id=update.effective_chat.id, text="Tee uusi haku /hae")
             show_more(update, context, "s5")
+
 
     except IndexError:
         context.bot.send_message(chat_id=update.effective_chat.id,
