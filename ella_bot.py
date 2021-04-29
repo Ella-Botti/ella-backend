@@ -87,9 +87,9 @@ Ella botilla voit hakea sisälöä eri tavoilla:
 
 # Hakee tietokannasta artikkeleita hakusanan perusteella
 def search(update, context, language, word, position):
+
     try:
         global global_user_list
-
         # Hakee hakusanaa funktiokutsusta
         if word:
             global_user_list[update.effective_chat.id] = [
@@ -126,9 +126,39 @@ def search(update, context, language, word, position):
                         chat_id=update.effective_chat.id, text=results[i])
                     global_user_list[update.effective_chat.id][2] = i+1
                 show_more(update, context, 's1')
-            print(update.effective_chat.id)
 
  # Kehoittaa käuyyäjää syöttämään haulle hakusanan
+    except KeyError:
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text=no_search_word[randint(0, (len(no_search_word) - 1))])
+    except IndexError:
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text=no_more_results[randint(0, (len(no_more_results) - 1))])
+
+# Sekalainen haku kaikista formaateista
+def mixed_search(update, context):
+    try:
+        global global_user_list
+        global_user_list[update.effective_chat.id] = [
+                context.args[0]]
+        print(global_user_list[update.effective_chat.id][0])
+
+        if len(global_user_list[update.effective_chat.id][0]) > 1:
+            results = []
+            result_art = search_keyword(global_user_list[update.effective_chat.id][0], 'fi')
+            result_tv = get_media(global_user_list[update.effective_chat.id][0], 'tvprogram')
+            result_radio = get_media(global_user_list[update.effective_chat.id][0], 'radioprogram')
+            results = result_art + result_radio + result_tv
+            
+            if len(results) == 0:
+                context.bot.send_message(
+                    chat_id=update.effective_chat.id, text=no_results[randint(0, (len(no_results) - 1))])
+            else:
+                i = randint(0, (len(results) - 1))
+                for i in range(i, i+5):
+                    context.bot.send_message(
+                        chat_id=update.effective_chat.id, text=results[randint(0, (len(results) - 1))])
+
     except KeyError:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text=no_search_word[randint(0, (len(no_search_word) - 1))])
@@ -541,6 +571,9 @@ dispatcher.add_handler(category_handler)
 
 search_handler = CommandHandler('search', search)
 dispatcher.add_handler(search_handler)
+
+mixed_search_handler = CommandHandler('haekaikki', mixed_search)
+dispatcher.add_handler(mixed_search_handler)
 
 hae_handler = CommandHandler('artikkeli', hae_artikkeli)
 dispatcher.add_handler(hae_handler)
