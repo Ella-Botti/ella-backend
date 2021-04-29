@@ -9,4 +9,4 @@ RUN pip install psycopg2
 RUN pip3 install python-telegram-bot
 RUN pip3 install python-dotenv
 
-ENTRYPOINT ["python3", "ella_bot.py"]
+ENTRYPOINT ["python3", "-u", "ella_bot.py"]
