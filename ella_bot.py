@@ -55,7 +55,7 @@ Till exempel med \"/sok hund\" får du hundartiklar.
 Tyvärr fungerar bara artikelsökningen just nu på svenska.
 """)
 
-    notifikaatio_lista = search_fact()
+    """ notifikaatio_lista = search_fact()
 
     # Tarkistaa onko kello 12.00, jos on, lähettää päivän faktan
     while True:
@@ -69,7 +69,7 @@ Tyvärr fungerar bara artikelsökningen just nu på svenska.
 
         if seconds_int == 0 and minutes_int == 0 and hours_int == 12:
             context.bot.send_message(chat_id=update.effective_chat.id, text=choice(notifikaatio_lista))
-            time.sleep(2)
+            time.sleep(2) """
 
 
 def help(update, context):
