@@ -36,3 +36,5 @@ Of course, I am a great multitasker. Working with me is very simple:
 
 # Problem: Commands /tv and /radio are giving me errors
 The API I use to search tv- and radio-programs has been deprecated, meaning that I cannot help you with these searches any more. Thankfully I have lots of other searches that you can use to find different media. 
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
